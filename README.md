@@ -1,0 +1,1 @@
+# IA-practica2-SBCs
