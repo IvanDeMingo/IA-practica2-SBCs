@@ -1,0 +1,351 @@
+; Sun Nov 26 13:25:52 CET 2017
+; 
+;+ (version "3.4.8")
+;+ (build "Build 629")
+
+
+(defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
+	(is-a USER)
+	(role abstract)
+	(single-slot ProhibicionMascotas
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Soleada
+		(type SYMBOL)
+		(allowed-values MA%C3%91ANA TARDE TODOELDIA NO)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot PrefiereTransPublico
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PrecioMensual
+		(type FLOAT)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot PiscinaComunitaria
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Amueblada
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Superficie
+		(type FLOAT)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Margen
+		(type SYMBOL)
+		(allowed-values ESTRICTO FLEXIBLE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot KB_328930_Class1
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot DistanciaServicios
+		(type INSTANCE)
+;+		(allowed-classes DistanciaServicio)
+		(create-accessor read-write))
+	(multislot DormitoriosVivienda
+		(type INSTANCE)
+;+		(allowed-classes Dormitorio)
+		(cardinality 1 ?VARIABLE)
+		(create-accessor read-write))
+	(single-slot LugarDeTrabajoEstudio
+		(type INSTANCE)
+;+		(allowed-classes Coordenadas)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Terraza
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(multislot Cama
+		(type SYMBOL)
+		(allowed-values INDIVIDUAL MATRIMONIO LITERA)
+		(cardinality 1 ?VARIABLE)
+		(create-accessor read-write))
+	(single-slot Servicio
+		(type SYMBOL)
+		(allowed-values TRANSPORTE-PUBLICO ZONA-COMERCIAL SUPERMERCADO HIPERMERCADO COLEGIO CENTRO-SALUD ZONA-VERDE ZONA-NOCTURNA-OCIO ESTADIO-DEPORTE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot PrecioMinimo
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Balcon
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(multislot DormitoriosCliente
+		(type INSTANCE)
+;+		(allowed-classes Dormitorio)
+		(create-accessor read-write))
+	(single-slot TrabajaEstudia
+;+		(comment "'True' si trabaja o estudia, 'False' en cualquier otro caso")
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot AireAcondicionado
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Localizacion
+		(type INSTANCE)
+;+		(allowed-classes Coordenadas)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Coche
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Distancia
+		(type SYMBOL)
+		(allowed-values CERCA MEDIA-DISTANCIA LEJOS)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Calefaccion
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot CoordX
+		(type FLOAT)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(multislot EdadesSolicitantes
+		(type FLOAT)
+		(create-accessor read-write))
+	(single-slot CoordY
+		(type FLOAT)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot ConElectrodomesticos
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Vistas
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot KB_328930_Class34
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PrecioMaximo
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Garaje
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass ViviendaAlquiler
+	(is-a USER)
+	(role abstract)
+	(single-slot Terraza
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot ProhibicionMascotas
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Soleada
+		(type SYMBOL)
+		(allowed-values MA%C3%91ANA TARDE TODOELDIA NO)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot PrecioMensual
+		(type FLOAT)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Calefaccion
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot AireAcondicionado
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot PiscinaComunitaria
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Amueblada
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Localizacion
+		(type INSTANCE)
+;+		(allowed-classes Coordenadas)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot ConElectrodomesticos
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Superficie
+		(type FLOAT)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Vistas
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Balcon
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(multislot DormitoriosVivienda
+		(type INSTANCE)
+;+		(allowed-classes Dormitorio)
+		(cardinality 1 ?VARIABLE)
+		(create-accessor read-write))
+	(single-slot Garaje
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Piso
+	(is-a ViviendaAlquiler)
+	(role concrete))
+
+(defclass Duplex
+	(is-a ViviendaAlquiler)
+	(role concrete))
+
+(defclass ViviendaUnifamiliar
+	(is-a ViviendaAlquiler)
+	(role concrete))
+
+(defclass Cliente
+	(is-a USER)
+	(role abstract)
+	(single-slot PrecioMinimo
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot PrefiereTransPublico
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot TrabajaEstudia
+;+		(comment "'True' si trabaja o estudia, 'False' en cualquier otro caso")
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot DistanciaServicios
+		(type INSTANCE)
+;+		(allowed-classes DistanciaServicio)
+		(create-accessor read-write))
+	(single-slot PrecioMaximo
+		(type FLOAT)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot EdadesSolicitantes
+		(type FLOAT)
+		(create-accessor read-write))
+	(single-slot LugarDeTrabajoEstudio
+		(type INSTANCE)
+;+		(allowed-classes Coordenadas)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Coche
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Margen
+		(type SYMBOL)
+		(allowed-values ESTRICTO FLEXIBLE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(multislot DormitoriosCliente
+		(type INSTANCE)
+;+		(allowed-classes Dormitorio)
+		(create-accessor read-write)))
+
+(defclass ParejaSinHijos
+	(is-a Cliente)
+	(role concrete))
+
+(defclass ParejaFuturosHijos
+	(is-a Cliente)
+	(role concrete))
+
+(defclass Familia
+	(is-a Cliente)
+	(role concrete))
+
+(defclass GrupoEstudiantes
+	(is-a Cliente)
+	(role concrete))
+
+(defclass Individuo
+	(is-a Cliente)
+	(role concrete))
+
+(defclass Coordenadas
+	(is-a USER)
+	(role concrete)
+	(single-slot CoordX
+		(type FLOAT)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot CoordY
+		(type FLOAT)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Dormitorio
+	(is-a USER)
+	(role concrete)
+	(multislot Cama
+		(type SYMBOL)
+		(allowed-values INDIVIDUAL MATRIMONIO LITERA)
+		(cardinality 1 ?VARIABLE)
+		(create-accessor read-write)))
+
+(defclass DistanciaServicio
+	(is-a USER)
+	(role concrete)
+	(single-slot Distancia
+		(type SYMBOL)
+		(allowed-values CERCA MEDIA-DISTANCIA LEJOS)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot Servicio
+		(type SYMBOL)
+		(allowed-values TRANSPORTE-PUBLICO ZONA-COMERCIAL SUPERMERCADO HIPERMERCADO COLEGIO CENTRO-SALUD ZONA-VERDE ZONA-NOCTURNA-OCIO ESTADIO-DEPORTE)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
