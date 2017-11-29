@@ -1,4 +1,4 @@
-; Wed Nov 29 13:39:42 CET 2017
+; Wed Nov 29 13:45:31 CET 2017
 ; 
 ;+ (version "3.4.8")
 ;+ (build "Build 629")
@@ -60,7 +60,7 @@
 		(create-accessor read-write))
 	(single-slot LugarDeTrabajoEstudio
 		(type INSTANCE)
-;+		(allowed-classes Ubicaci%C3%B3n)
+;+		(allowed-classes Ubicacion)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot Terraza
@@ -104,12 +104,17 @@
 		(create-accessor read-write))
 	(single-slot Localizacion
 		(type INSTANCE)
-;+		(allowed-classes Ubicaci%C3%B3n)
+;+		(allowed-classes Ubicacion)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot Localizaci%C3%B3n
 		(type STRING)
 ;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Tipo
+		(type SYMBOL)
+		(allowed-values COLEGIO ZONA-OCIO HOSPITAL)
+;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot Coche
 		(type SYMBOL)
@@ -136,11 +141,6 @@
 		(create-accessor read-write))
 	(multislot EdadesSolicitantes
 		(type FLOAT)
-		(create-accessor read-write))
-	(single-slot tipo
-		(type SYMBOL)
-		(allowed-values COLEGIO ZONA-OCIO HOSPITAL)
-;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot CoordY
 		(type FLOAT)
@@ -170,7 +170,7 @@
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
-(defclass Ubicaci%C3%B3n
+(defclass Ubicacion
 	(is-a USER)
 	(role concrete)
 	(single-slot CoordX
@@ -183,16 +183,16 @@
 		(create-accessor read-write)))
 
 (defclass ServicioCiudad
-	(is-a Ubicaci%C3%B3n)
+	(is-a Ubicacion)
 	(role concrete)
-	(single-slot tipo
+	(single-slot Tipo
 		(type SYMBOL)
 		(allowed-values COLEGIO ZONA-OCIO HOSPITAL)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
 (defclass ViviendaAlquiler
-	(is-a Ubicaci%C3%B3n)
+	(is-a Ubicacion)
 	(role abstract)
 	(multislot Dormitorios
 		(type SYMBOL)

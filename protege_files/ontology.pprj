@@ -1,4 +1,4 @@
-; Wed Nov 29 13:39:42 CET 2017
+; Wed Nov 29 13:45:31 CET 2017
 ; 
 ;+ (version "3.4.8")
 ;+ (build "Build 629")
@@ -20,9 +20,9 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[ontology_ProjectKB_Class84]
-		[ontology_ProjectKB_Class85]
-		[ontology_ProjectKB_Class86]))
+		[ontology_ProjectKB_Class87]
+		[ontology_ProjectKB_Class88]
+		[ontology_ProjectKB_Class89]))
 
 ([CLSES_TAB] of  Widget
 
@@ -575,17 +575,17 @@
 ([ontology_ProjectKB_Class80] of  Property_List
 )
 
-([ontology_ProjectKB_Class84] of  String
+([ontology_ProjectKB_Class87] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([ontology_ProjectKB_Class85] of  String
+([ontology_ProjectKB_Class88] of  String
 
 	(name ":PAL-CONSTRAINT")
 	(string_value "%3APAL-NAME"))
 
-([ontology_ProjectKB_Class86] of  String
+([ontology_ProjectKB_Class89] of  String
 
 	(name ":META-CLASS")
 	(string_value "%3ANAME"))
