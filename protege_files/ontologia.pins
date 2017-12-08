@@ -1,4 +1,232 @@
-; Wed Nov 29 14:03:24 CET 2017
+; Fri Dec 08 16:36:58 CET 2017
 ; 
 ;+ (version "3.4.8")
 ;+ (build "Build 629")
+
+([ontologia_Class22] of  ViviendaAlquiler
+
+	(amueblada TRUE)
+	(dormitorios DOBLE INDIVIDUAL INDIVIDUAL)
+	(precioMensual 850.0)
+	(soleada MANANA)
+	(superficie 75.0)
+	(tipoVivienda PISO)
+	(ubicacionVivienda [ontologia_Class24]))
+
+([ontologia_Class24] of  Ubicacion
+
+	(coordX 3.0)
+	(coordY 2.0))
+
+([ontologia_Class25] of  ViviendaAlquiler
+
+	(amueblada FALSE)
+	(dormitorios INDIVIDUAL DOBLE DOBLE)
+	(precioMensual 810.0)
+	(soleada TODO-EL-DIA)
+	(superficie 83.0)
+	(tipoVivienda UNIFAMILIAR)
+	(ubicacionVivienda [ontologia_Class26]))
+
+([ontologia_Class26] of  Ubicacion
+
+	(coordX 10.0)
+	(coordY 68.0))
+
+([ontologia_Class27] of  ViviendaAlquiler
+
+	(amueblada TRUE)
+	(dormitorios DOBLE)
+	(precioMensual 330.0)
+	(soleada NO)
+	(superficie 55.0)
+	(tipoVivienda PISO)
+	(ubicacionVivienda [ontologia_Class30]))
+
+([ontologia_Class30] of  Ubicacion
+
+	(coordX 91.0)
+	(coordY 28.0))
+
+([ontologia_Class31] of  ViviendaAlquiler
+
+	(amueblada FALSE)
+	(dormitorios INDIVIDUAL DOBLE)
+	(precioMensual 550.0)
+	(soleada MANANA)
+	(superficie 61.0)
+	(tipoVivienda PISO)
+	(ubicacionVivienda [ontologia_Class32]))
+
+([ontologia_Class32] of  Ubicacion
+
+	(coordX 48.0)
+	(coordY 39.0))
+
+([ontologia_Class33] of  ViviendaAlquiler
+
+	(amueblada FALSE)
+	(dormitorios DOBLE INDIVIDUAL)
+	(precioMensual 415.0)
+	(soleada TODO-EL-DIA)
+	(superficie 75.0)
+	(tipoVivienda PISO)
+	(ubicacionVivienda [ontologia_Class34]))
+
+([ontologia_Class34] of  Ubicacion
+
+	(coordX 94.0)
+	(coordY 91.0))
+
+([ontologia_Class35] of  ViviendaAlquiler
+
+	(amueblada TRUE)
+	(dormitorios DOBLE DOBLE INDIVIDUAL INDIVIDUAL)
+	(precioMensual 1450.0)
+	(soleada TODO-EL-DIA)
+	(superficie 130.0)
+	(tipoVivienda UNIFAMILIAR)
+	(ubicacionVivienda [ontologia_Class36]))
+
+([ontologia_Class36] of  Ubicacion
+
+	(coordX 50.0)
+	(coordY 76.0))
+
+([ontologia_Class37] of  ViviendaAlquiler
+
+	(amueblada TRUE)
+	(dormitorios INDIVIDUAL DOBLE DOBLE)
+	(precioMensual 1600.0)
+	(soleada TARDE)
+	(superficie 120.0)
+	(tipoVivienda PISO)
+	(ubicacionVivienda [ontologia_Class38]))
+
+([ontologia_Class38] of  Ubicacion
+)
+
+([ontologia_Class39] of  ViviendaAlquiler
+
+	(amueblada TRUE)
+	(dormitorios DOBLE INDIVIDUAL)
+	(precioMensual 900.0)
+	(soleada MANANA)
+	(superficie 65.0)
+	(tipoVivienda PISO)
+	(ubicacionVivienda [ontologia_Class40]))
+
+([ontologia_Class40] of  Ubicacion
+
+	(coordX 12.0)
+	(coordY 87.0))
+
+([ontologia_Class41] of  ViviendaAlquiler
+
+	(amueblada TRUE)
+	(dormitorios DOBLE)
+	(precioMensual 660.0)
+	(soleada TODO-EL-DIA)
+	(superficie 60.0)
+	(tipoVivienda PISO)
+	(ubicacionVivienda [ontologia_Class42]))
+
+([ontologia_Class42] of  Ubicacion
+
+	(coordX 20.0)
+	(coordY 15.0))
+
+([ontologia_Class43] of  ViviendaAlquiler
+
+	(amueblada FALSE)
+	(dormitorios DOBLE INDIVIDUAL INDIVIDUAL)
+	(precioMensual 620.0)
+	(soleada MANANA)
+	(superficie 72.0)
+	(tipoVivienda UNIFAMILIAR)
+	(ubicacionVivienda [ontologia_Class44]))
+
+([ontologia_Class44] of  Ubicacion
+
+	(coordX 23.0)
+	(coordY 58.0))
+
+([ontologia_Class45] of  ViviendaAlquiler
+
+	(amueblada TRUE)
+	(dormitorios INDIVIDUAL INDIVIDUAL INDIVIDUAL INDIVIDUAL)
+	(precioMensual 1000.0)
+	(soleada MANANA)
+	(superficie 90.0)
+	(tipoVivienda PISO)
+	(ubicacionVivienda [ontologia_Class46]))
+
+([ontologia_Class46] of  Ubicacion
+
+	(coordX 60.0)
+	(coordY 87.0))
+
+([ontologia_Class47] of  ViviendaAlquiler
+
+	(amueblada TRUE)
+	(dormitorios INDIVIDUAL INDIVIDUAL INDIVIDUAL)
+	(precioMensual 750.0)
+	(soleada TARDE)
+	(superficie 81.0)
+	(tipoVivienda PISO)
+	(ubicacionVivienda [ontologia_Class48]))
+
+([ontologia_Class48] of  Ubicacion
+
+	(coordX 44.0)
+	(coordY 10.0))
+
+([ontologia_Class49] of  Servicio
+
+	(tipoServicio COLEGIO)
+	(ubicacionServicio [ontologia_Class50]))
+
+([ontologia_Class50] of  Ubicacion
+
+	(coordX 65.0)
+	(coordY 28.0))
+
+([ontologia_Class51] of  Servicio
+
+	(tipoServicio COLEGIO)
+	(ubicacionServicio [ontologia_Class52]))
+
+([ontologia_Class52] of  Ubicacion
+
+	(coordX 30.0)
+	(coordY 85.0))
+
+([ontologia_Class53] of  Servicio
+
+	(tipoServicio HOSPITAL)
+	(ubicacionServicio [ontologia_Class54]))
+
+([ontologia_Class54] of  Ubicacion
+
+	(coordX 29.0)
+	(coordY 30.0))
+
+([ontologia_Class55] of  Servicio
+
+	(tipoServicio ZONA-OCIO)
+	(ubicacionServicio [ontologia_Class56]))
+
+([ontologia_Class56] of  Ubicacion
+
+	(coordX 75.0)
+	(coordY 33.0))
+
+([ontologia_Class57] of  Servicio
+
+	(tipoServicio ZONA-OCIO)
+	(ubicacionServicio [ontologia_Class58]))
+
+([ontologia_Class58] of  Ubicacion
+
+	(coordX 60.0)
+	(coordY 90.0))

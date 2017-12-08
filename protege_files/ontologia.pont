@@ -1,4 +1,4 @@
-; Wed Nov 29 14:03:24 CET 2017
+; Fri Dec 08 16:36:58 CET 2017
 ; 
 ;+ (version "3.4.8")
 ;+ (build "Build 629")
@@ -7,116 +7,171 @@
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
-	(single-slot TipoServicio
-		(type SYMBOL)
-		(allowed-values COLEGIO HOSPITAL ZONA-OCIO)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot Soleada
-		(type SYMBOL)
-		(allowed-values MANANA TARDE TODO-EL-DIA NO)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot PrecioMensual
-		(type FLOAT)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot Amueblada
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot Superficie
-		(type FLOAT)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot UbicacionVivienda
-		(type INSTANCE)
-;+		(allowed-classes Ubicacion)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot Tipo
-		(type SYMBOL)
-		(allowed-values PISO VIVIENDA-UNIFAMILIAR)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot ontologia_Class0
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(multislot Dormitorios
-		(type SYMBOL)
-		(allowed-values INDIVIDUAL DOBLE)
-		(create-accessor read-write))
-	(single-slot TipoVivienda
+	(single-slot tipoVivienda
 		(type SYMBOL)
 		(allowed-values PISO UNIFAMILIAR)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
-	(single-slot CoordX
-		(type FLOAT)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot UbicacionServicio
+	(single-slot ubicacionServicio
 		(type INSTANCE)
 ;+		(allowed-classes Ubicacion)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(multislot criteriosCumplidos
+		(type STRING)
+		(create-accessor read-write))
+	(single-slot soleada
+		(type SYMBOL)
+		(allowed-values MANANA TARDE TODO-EL-DIA NO)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(multislot criteriosNoCumplidos
+		(type STRING)
+		(create-accessor read-write))
+	(single-slot KB_055321_Class20
+		(type STRING)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot vivienda
+		(type INSTANCE)
+;+		(allowed-classes ViviendaAlquiler)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot precioMensual
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(multislot criteriosExtra
+		(type STRING)
+		(create-accessor read-write))
+	(multislot dormitorios
+		(type SYMBOL)
+		(allowed-values INDIVIDUAL DOBLE)
+		(cardinality 1 ?VARIABLE)
+		(create-accessor read-write))
+	(single-slot superficie
+		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot grado
+		(type INTEGER)
+		(default 0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot coordX
+		(type FLOAT)
+		(range 0.0 100.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot coordY
+		(type FLOAT)
+		(range 0.0 100.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot amueblada
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot ubicacionVivienda
+		(type INSTANCE)
+;+		(allowed-classes Ubicacion)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot tipoServicio
+		(type SYMBOL)
+		(allowed-values COLEGIO HOSPITAL ZONA-OCIO)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
 (defclass Ubicacion
 	(is-a USER)
 	(role concrete)
-	(single-slot CoordX
+	(single-slot coordX
 		(type FLOAT)
+		(range 0.0 100.0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot coordY
+		(type FLOAT)
+		(range 0.0 100.0)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
 (defclass ViviendaAlquiler
 	(is-a USER)
-	(role abstract)
-	(multislot Dormitorios
-		(type SYMBOL)
-		(allowed-values INDIVIDUAL DOBLE)
-		(create-accessor read-write))
-	(single-slot TipoVivienda
-		(type SYMBOL)
-		(allowed-values PISO UNIFAMILIAR)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot Soleada
+	(role concrete)
+	(single-slot soleada
 		(type SYMBOL)
 		(allowed-values MANANA TARDE TODO-EL-DIA NO)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
-	(single-slot PrecioMensual
+	(single-slot precioMensual
 		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
-	(single-slot Amueblada
+	(single-slot amueblada
 		(type SYMBOL)
 		(allowed-values FALSE TRUE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
-	(single-slot UbicacionVivienda
+	(single-slot tipoVivienda
+		(type SYMBOL)
+		(allowed-values PISO UNIFAMILIAR)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(multislot dormitorios
+		(type SYMBOL)
+		(allowed-values INDIVIDUAL DOBLE)
+		(cardinality 1 ?VARIABLE)
+		(create-accessor read-write))
+	(single-slot ubicacionVivienda
 		(type INSTANCE)
 ;+		(allowed-classes Ubicacion)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
-	(single-slot Superficie
+	(single-slot superficie
 		(type FLOAT)
+		(range 0.0 %3FVARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
 (defclass Servicio
 	(is-a USER)
 	(role concrete)
-	(single-slot TipoServicio
+	(single-slot tipoServicio
 		(type SYMBOL)
 		(allowed-values COLEGIO HOSPITAL ZONA-OCIO)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
-	(single-slot UbicacionServicio
+	(single-slot ubicacionServicio
 		(type INSTANCE)
 ;+		(allowed-classes Ubicacion)
 ;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Recomendacion
+	(is-a USER)
+	(role concrete)
+	(multislot criteriosCumplidos
+		(type STRING)
+		(create-accessor read-write))
+	(multislot criteriosNoCumplidos
+		(type STRING)
+		(create-accessor read-write))
+	(single-slot vivienda
+		(type INSTANCE)
+;+		(allowed-classes ViviendaAlquiler)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot grado
+		(type INTEGER)
+		(default 0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(multislot criteriosExtra
+		(type STRING)
 		(create-accessor read-write)))
