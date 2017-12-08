@@ -39,7 +39,6 @@
 		(create-accessor read-write))
 	(single-slot precioMensual
 		(type FLOAT)
-		(range 0.0 %3FVARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(multislot criteriosExtra
@@ -52,7 +51,6 @@
 		(create-accessor read-write))
 	(single-slot superficie
 		(type FLOAT)
-		(range 0.0 %3FVARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot grado
@@ -110,7 +108,6 @@
 		(create-accessor read-write))
 	(single-slot precioMensual
 		(type FLOAT)
-		(range 0.0 %3FVARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot amueblada
@@ -135,7 +132,6 @@
 		(create-accessor read-write))
 	(single-slot superficie
 		(type FLOAT)
-		(range 0.0 %3FVARIABLE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
