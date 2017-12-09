@@ -430,13 +430,13 @@
 
 (deftemplate RestriccionPrecio
 	(slot precioMax (type FLOAT))
-	(slot margenPrecioMax (type SYMBOL) (allowed-values ESTRICTO FLEXIBLE) (default ESTRICTO))
+	(slot margenEstrictoPrecioMax (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
 	(slot precioMin (type FLOAT))
 )
 
 (deftemplate RestriccionDormitorios
 	(slot numeroDormitorios (type INTEGER))
-	(slot margenDormitorios (type SYMBOL) (allowed-values ESTRICTO FLEXIBLE) (default ESTRICTO))
+	(slot margenEstrictoDormitorios (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
 	(slot numeroDormitoriosDobles (type INTEGER))
 )
 
@@ -554,11 +554,26 @@
 	(export ?ALL)
 )
 
-(defrule crear-cliente
+(defrule crear-restricciones
 	(nuevo-cliente)
-	(not (Cliente))
+	(not (RestriccionPrecio))
+        (not (RestriccionDormitorios))
+        (not (RestriccionServiciosCercanos))
 	=>
-	(assert (Cliente))
+	(assert (RestriccionPrecio))
+        (assert (RestriccionDormitorios))
+        (assert (RestriccionServiciosCercanos))
+)
+
+(defrule restriccion-precio
+        (nuevo-cliente)
+        (not (restriccion-precio-done))
+        ?cliente <- (Cliente (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto) (precioMin ?precioMin))
+        ?restrPrecio <- (RestriccionPrecio)
+        =>
+        (modify ?restrPrecio (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto) (precioMin ?precioMin))
+        (printout t "Restricción precio creada")
+        (assert (restriccion-precio-done))
 )
 
 (defrule fin-inferir-datos
