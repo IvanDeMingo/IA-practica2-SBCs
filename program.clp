@@ -572,7 +572,7 @@
         ?restrPrecio <- (RestriccionPrecio)
         =>
         (modify ?restrPrecio (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto) (precioMin ?precioMin))
-        (printout t "Restricción precio creada")
+        (printout t "Restricción precio creada" crlf)
         (assert (restriccion-precio-done))
 )
 
@@ -591,5 +591,18 @@
 	(import MAIN ?ALL)
 	(import inferir-datos ?ALL)
 	(export ?ALL)
+)
+
+(defrule obtener-viviendas
+        (nuevo-cliente)
+        =>
+        (bind $?all (find-all-instances ((?inst ViviendaAlquiler)) TRUE))
+        (loop-for-count (?i 1 (length$ ?all)) do
+                (bind ?vivienda (nth$ ?i ?all))
+                (bind ?nombreInst (sym-cat vivienda ?i))
+                (bind ?inst (make-instance ?nombreInst of Recomendacion))
+                (send ?inst put-vivienda (instance-address (nth$ ?i ?all)))
+        )
+        (printout t "Instancias de Recomendacion creadas" crlf)
 )
 
