@@ -606,3 +606,15 @@
         (printout t "Instancias de Recomendacion creadas" crlf)
 )
 
+(defrule criterio-precio-min
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (precioMensual ?precioMensual))
+	(RestriccionPrecio (precioMin ?precioMin))
+	(test (eq ?vivienda ?viviendaR))
+	=>
+	(if (>= ?precioMensual ?precioMin)
+		then (slot-insert$ ?recomendacion criteriosCumplidos 1 "Precio mínimo")
+		else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 "Precio mínimo")
+	)
+	(printout t "Descartar por precio minimo")
+)
