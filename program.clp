@@ -445,6 +445,15 @@
 )
 
 ;;;--------------------------------------------------------------------------;;;
+;;;-------------------------- VARIABLES GLOBALES ----------------------------;;;
+;;;--------------------------------------------------------------------------;;;
+
+; Criterios
+
+(defglobal ?*crit-precio-max* = "Precio máximo")
+(defglobal ?*crit-precio-min* = "Precio mínimo")
+
+;;;--------------------------------------------------------------------------;;;
 ;;;------------------------- FUNCIONES AUXILIARES ---------------------------;;;
 ;;;--------------------------------------------------------------------------;;;
 
@@ -625,11 +634,11 @@
 	(if (<= ?precioMensual ?precioMax) then
 		; insertar como criterio cumplido
 		(bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
-		(slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) "Precio máximo")
+		(slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) ?*crit-precio-max*)
 	else
 		; insertar como criterio no cumplido
 		(bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
-		(slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) "Precio máximo")
+		(slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) ?*crit-precio-max*)
 	)
 )
 
@@ -643,10 +652,10 @@
 	(if (>= ?precioMensual ?precioMin) then
 		; insertar como criterio cumplido
 		(bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
-		(slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) "Precio mínimo")
+		(slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) ?*crit-precio-min*)
 	else
 		; insertar como criterio no cumplido
 		(bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
-		(slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) "Precio mínimo")
+		(slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) ?*crit-precio-min*)
 	)
 )
