@@ -448,6 +448,8 @@
 ;;;------------------------- FUNCIONES AUXILIARES ---------------------------;;;
 ;;;--------------------------------------------------------------------------;;;
 
+; Preguntas
+
 (deffunction pregunta-general (?pregunta)
 	(format t "¿%s?  " ?pregunta)
 	(bind ?respuesta (read))
@@ -470,7 +472,7 @@
 (deffunction pregunta-numerica (?pregunta ?rangini ?rangfi)
 	(format t "¿%s? [%d, %d] " ?pregunta ?rangini ?rangfi)
 	(bind ?respuesta (read))
-	(while (not(and(> ?respuesta ?rangini)(< ?respuesta ?rangfi))) do
+	(while (not(and(>= ?respuesta ?rangini)(<= ?respuesta ?rangfi))) do
 		(format t "¿%s? [%d, %d] " ?pregunta ?rangini ?rangfi)
 		(bind ?respuesta (read))
 	)
@@ -483,6 +485,12 @@
 		then TRUE
 		else FALSE
 	)
+)
+
+; Cálculos
+
+(deffunction precio-max-flexible (?precio)
+	(* ?precio 1.1) ; Margen del 10%
 )
 
 ;;;--------------------------------------------------------------------------;;;
@@ -519,7 +527,7 @@
 	(not (precio-maximo-mensual-done))
 	?cliente <- (Cliente)
 	=>
-	(bind ?precio (pregunta-numerica "Precio máximo ((-1) si es indiferente)" -2 5000))
+	(bind ?precio (pregunta-numerica "Precio máximo ((-1) si es indiferente)" -1 5000))
 	(if (> ?precio -1) then
 		(bind ?margen (si-o-no-p "Margen estricto"))
 		(modify ?cliente (precioMax ?precio) (margenEstrictoPrecioMax ?margen))
@@ -532,7 +540,7 @@
 	(not (precio-minimo-mensual-done))
 	?cliente <- (Cliente)
 	=>
-	(bind ?precio (pregunta-numerica "Precio mínimo ((-1) si es indiferente)" -2 5000))
+	(bind ?precio (pregunta-numerica "Precio mínimo ((-1) si es indiferente)" -1 5000))
 	(if (> ?precio -1) then (modify ?cliente (precioMin ?precio)))
 	(assert (precio-minimo-mensual-done))
 )
@@ -569,9 +577,9 @@
         (nuevo-cliente)
         (not (restriccion-precio-done))
         ?cliente <- (Cliente (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto) (precioMin ?precioMin))
-        ?restrPrecio <- (RestriccionPrecio)
+        ?restriccion <- (RestriccionPrecio)
         =>
-        (modify ?restrPrecio (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto) (precioMin ?precioMin))
+        (modify ?restriccion (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto) (precioMin ?precioMin))
         (printout t "Restricción precio creada" crlf)
         (assert (restriccion-precio-done))
 )
@@ -606,15 +614,39 @@
         (printout t "Instancias de Recomendacion creadas" crlf)
 )
 
+(defrule criterio-precio-max
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (precioMensual ?precioMensual))
+	(RestriccionPrecio (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto))
+	(test (eq ?vivienda ?viviendaR))
+	=>
+	; TODO: Gestionar precios máximos indefinidos (-1)
+	(if (not ?estricto) then (bind ?precioMax (precio-max-flexible ?precioMax)))
+	(if (<= ?precioMensual ?precioMax) then
+		; insertar como criterio cumplido
+		(bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
+		(slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) "Precio máximo")
+	else
+		; insertar como criterio no cumplido
+		(bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
+		(slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) "Precio máximo")
+	)
+)
+
 (defrule criterio-precio-min
 	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
 	?vivienda <- (object (is-a ViviendaAlquiler) (precioMensual ?precioMensual))
 	(RestriccionPrecio (precioMin ?precioMin))
 	(test (eq ?vivienda ?viviendaR))
 	=>
-	(if (>= ?precioMensual ?precioMin)
-		then (slot-insert$ ?recomendacion criteriosCumplidos 1 "Precio mínimo")
-		else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 "Precio mínimo")
+	; TODO: Gestionar precios mínimos indefinidos (-1)
+	(if (>= ?precioMensual ?precioMin) then
+		; insertar como criterio cumplido
+		(bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
+		(slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) "Precio mínimo")
+	else
+		; insertar como criterio no cumplido
+		(bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
+		(slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) "Precio mínimo")
 	)
-	(printout t "Descartar por precio minimo")
 )
