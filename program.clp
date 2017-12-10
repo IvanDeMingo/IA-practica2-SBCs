@@ -627,9 +627,8 @@
 	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
 	?vivienda <- (object (is-a ViviendaAlquiler) (precioMensual ?precioMensual))
 	(RestriccionPrecio (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto))
-	(test (eq ?vivienda ?viviendaR))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?precioMax -1.0)))
 	=>
-	; TODO: Gestionar precios máximos indefinidos (-1)
 	(if (not ?estricto) then (bind ?precioMax (precio-max-flexible ?precioMax)))
 	(if (<= ?precioMensual ?precioMax) then
 		; insertar como criterio cumplido
@@ -646,9 +645,8 @@
 	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
 	?vivienda <- (object (is-a ViviendaAlquiler) (precioMensual ?precioMensual))
 	(RestriccionPrecio (precioMin ?precioMin))
-	(test (eq ?vivienda ?viviendaR))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?precioMin -1.0)))
 	=>
-	; TODO: Gestionar precios mínimos indefinidos (-1)
 	(if (>= ?precioMensual ?precioMin) then
 		; insertar como criterio cumplido
 		(bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
