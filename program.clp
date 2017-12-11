@@ -478,7 +478,17 @@
 	?respuesta
 )
 
-(deffunction pregunta-numerica (?pregunta ?rangini ?rangfi)
+(deffunction pregunta-numerica (?pregunta)
+	(format t "¿%s? " ?pregunta)
+	(bind ?respuesta (read))
+	(while (not (eq (class ?respuesta) INTEGER)) do
+		(format t "¿%s? " ?pregunta)
+		(bind ?respuesta (read))
+	)
+	?respuesta
+)
+
+(deffunction pregunta-numerica-rango (?pregunta ?rangini ?rangfi)
 	(format t "¿%s? [%d, %d] " ?pregunta ?rangini ?rangfi)
 	(bind ?respuesta (read))
 	(while (not(and(>= ?respuesta ?rangini)(<= ?respuesta ?rangfi))) do
@@ -536,7 +546,7 @@
 	(not (precio-maximo-mensual-done))
 	?cliente <- (Cliente)
 	=>
-	(bind ?precio (pregunta-numerica "Precio máximo ((-1) si es indiferente)" -1 5000))
+	(bind ?precio (pregunta-numerica "Precio máximo ((-1) si es indiferente)"))
 	(if (> ?precio -1) then
 		(bind ?margen (si-o-no-p "Margen estricto"))
 		(modify ?cliente (precioMax ?precio) (margenEstrictoPrecioMax ?margen))
@@ -549,7 +559,7 @@
 	(not (precio-minimo-mensual-done))
 	?cliente <- (Cliente)
 	=>
-	(bind ?precio (pregunta-numerica "Precio mínimo ((-1) si es indiferente)" -1 5000))
+	(bind ?precio (pregunta-numerica "Precio mínimo ((-1) si es indiferente)"))
 	(if (> ?precio -1) then (modify ?cliente (precioMin ?precio)))
 	(assert (precio-minimo-mensual-done))
 )
