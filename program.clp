@@ -481,7 +481,7 @@
 (deffunction pregunta-numerica (?pregunta)
 	(format t "¿%s? " ?pregunta)
 	(bind ?respuesta (read))
-	(while (not (eq (class ?respuesta) INTEGER)) do
+	(while (not (or (eq (class ?respuesta) INTEGER) (eq (class ?respuesta) FLOAT))) do
 		(format t "¿%s? " ?pregunta)
 		(bind ?respuesta (read))
 	)
