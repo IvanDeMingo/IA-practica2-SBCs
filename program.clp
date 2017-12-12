@@ -615,8 +615,17 @@
         ?restriccion <- (RestriccionPrecio)
         =>
         (modify ?restriccion (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto) (precioMin ?precioMin))
-        (printout t "Restricción precio creada" crlf)
         (assert (restriccion-precio-done))
+)
+
+(defrule restriccion-dormitorios
+        (nuevo-cliente)
+        (not (restriccion-dormitorios-done))
+        ?cliente <- (Cliente (numeroDormitorios ?dorm) (margenEstrictoDormitorios ?estricto) (numeroDormitoriosDobles ?dobles))
+        ?restriccion <- (RestriccionDormitorios)
+        =>
+        (modify ?restriccion (numeroDormitorios ?dorm) (margenEstrictoDormitorios ?estricto) (numeroDormitoriosDobles ?dobles))
+        (assert (restriccion-dormitorios-done))
 )
 
 (defrule fin-inferir-datos
