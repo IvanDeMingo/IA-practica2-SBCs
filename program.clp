@@ -564,6 +564,22 @@
 	(assert (precio-minimo-mensual-done))
 )
 
+(defrule dormitorios
+        (nuevo-cliente)
+        (not (dormitorios-done))
+        ?cliente <- (Cliente)
+        =>
+        (bind ?dorm (pregunta-numerica "Número de dormitorios ((-1) si es indiferente)"))
+        (if (> ?dorm -1) then 
+                (bind ?dobles (pregunta-numerica "Número de dormitorios dobles ((-1) si es indiferente)"))
+                (if (> ?dorm -1) 
+                        then (modify ?cliente (numeroDormitorios ?dorm) (numeroDormitoriosDobles ?dobles))
+                        else (modify ?cliente (numeroDormitorios ?dorm))
+                )
+        )
+        (assert (dormitorios-done))
+)
+
 (defrule fin-preguntas
 	(nuevo-cliente)
 	=>
