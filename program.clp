@@ -515,6 +515,15 @@
 	(* ?precio 1.1) ; Margen del 10%
 )
 
+; Listas
+
+(deffunction num-apariciones-lista (?x ?lista)
+        ; Devuelve el número de veces que ?x aparece en la ?lista
+        (bind ?count 0)
+        (progn$ (?elem ?lista) (if (eq ?x ?elem) then (bind ?count (+ ?count 1))))
+        ?count
+)
+
 ;;;--------------------------------------------------------------------------;;;
 ;;;-------------------------- MODULO DE PREGUNTAS ---------------------------;;;
 ;;;--------------------------------------------------------------------------;;;
@@ -704,9 +713,9 @@
         ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
         ?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
         (RestriccionDormitorios (numeroDormitorios ?num) (margenEstrictoDormitorios ?estricto))
-        (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) ?estricto))
+        (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto TRUE)))
         =>
-        (if (eq (length$ $?dormitorios) ?num) then
+        (if (eq (length$ ?dormitorios) ?num) then
                 ; insertar como criterio cumplido
                 (bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
                 (slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) ?*crit-num-dorm*)
@@ -721,9 +730,9 @@
         ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
         ?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
         (RestriccionDormitorios (numeroDormitorios ?num) (margenEstrictoDormitorios ?estricto))
-        (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (not ?estricto)))
+        (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto FALSE)))
         =>
-        (if (>= (length$ $?dormitorios) ?num) then
+        (if (>= (length$ ?dormitorios) ?num) then
                 ; insertar como criterio cumplido
                 (bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
                 (slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) ?*crit-num-dorm*)
@@ -731,5 +740,39 @@
                 ; insertar como criterio no cumplido
                 (bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
                 (slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) ?*crit-num-dorm*)
+        )
+)
+
+(defrule criterio-dormitorios-dobles-estricto
+        ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+        ?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
+        (RestriccionDormitorios (numeroDormitoriosDobles ?num) (margenEstrictoDormitorios ?estricto))
+        (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto TRUE)))
+        =>
+        (if (eq (num-apariciones-lista DOBLE ?dormitorios) ?num) then
+                ; insertar como criterio cumplido
+                (bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
+                (slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) ?*crit-num-dorm-dobles*)
+        else
+                ; insertar como criterio no cumplido
+                (bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
+                (slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) ?*crit-num-dorm-dobles*)
+        )
+)
+
+(defrule criterio-dormitorios-dobles-no-estricto
+        ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+        ?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
+        (RestriccionDormitorios (numeroDormitoriosDobles ?num) (margenEstrictoDormitorios ?estricto))
+        (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto FALSE)))
+        =>
+        (if (>= (num-apariciones-lista DOBLE ?dormitorios) ?num) then
+                ; insertar como criterio cumplido
+                (bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
+                (slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) ?*crit-num-dorm-dobles*)
+        else
+                ; insertar como criterio no cumplido
+                (bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
+                (slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) ?*crit-num-dorm-dobles*)
         )
 )
