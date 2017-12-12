@@ -717,7 +717,7 @@
         )
 )
 
-(defrule criterio-dormitorios-estricto
+(defrule criterio-dormitorios-no-estricto
         ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
         ?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
         (RestriccionDormitorios (numeroDormitorios ?num) (margenEstrictoDormitorios ?estricto))
