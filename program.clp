@@ -413,7 +413,7 @@
 	(slot margenEstrictoDormitorios (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
 	(slot numeroDormitoriosDobles (type INTEGER) (default -1))
 
-	(multislot serviciosCercanos (type INSTANCE) (allowed-classes Servicio))
+	(multislot serviciosCercanos (type SYMBOL) (allowed-values COLEGIO HOSPITAL ZONA-OCIO))
 	(slot prefiereTransPublico (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
 
 	(multislot edadSolicitantes (type INTEGER))
@@ -441,7 +441,7 @@
 )
 
 (deftemplate RestriccionServiciosCercanos
-	(multislot serviciosCercanos (type INSTANCE) (allowed-classes Servicio))
+	(multislot serviciosCercanos (type SYMBOL) (allowed-values COLEGIO HOSPITAL ZONA-OCIO))
 )
 
 ;;;--------------------------------------------------------------------------;;;
@@ -509,6 +509,13 @@
 	)
 )
 
+(deffunction pregunta-lista (?pregunta) 
+        (format t "%s" ?pregunta)  
+        (bind ?resposta (readline))  
+        (bind ?res (str-explode ?resposta))   
+        ?res
+)
+
 ; Cálculos
 
 (deffunction precio-max-flexible (?precio)
@@ -518,7 +525,7 @@
 ; Listas
 
 (deffunction num-apariciones-lista (?x ?lista)
-        ; Devuelve el número de veces que ?x aparece en la ?lista
+        ; Devuelve el número de veces que ?x aparece en ?lista
         (bind ?count 0)
         (progn$ (?elem ?lista) (if (eq ?x ?elem) then (bind ?count (+ ?count 1))))
         ?count
@@ -592,6 +599,28 @@
         (assert (dormitorios-done))
 )
 
+(defrule servicios-cercanos
+        (nuevo-cliente)
+        (not (servicios-cercanos-done))
+        ?cliente <- (Cliente)
+        =>
+        (printout t "Servicios cercanos:" crlf)
+        (printout t "0 - Colegio" crlf)
+        (printout t "1 - Hospital" crlf)
+        (printout t "2 - Zona de ocio" crlf)
+        (bind $?servicios (pregunta-lista "Escribe los identificadores separados por espacios: "))
+        (bind $?lista (create$))
+        (progn$ (?s ?servicios)
+                (switch ?s
+                        (case 0 then (bind $?lista (insert$ ?lista 1 COLEGIO)))
+                        (case 1 then (bind $?lista (insert$ ?lista 1 HOSPITAL)))
+                        (case 2 then (bind $?lista (insert$ ?lista 1 ZONA-OCIO)))
+                )
+        )
+        (modify ?cliente (serviciosCercanos ?lista))
+        (assert (servicios-cercanos-done))
+)
+
 (defrule fin-preguntas
 	(nuevo-cliente)
 	=>
@@ -640,6 +669,16 @@
         (assert (restriccion-dormitorios-done))
 )
 
+(defrule restriccion-servicios-cercanos
+        (nuevo-cliente)
+        (not (restriccion-servicios-cercanos-done))
+        ?cliente <- (Cliente (serviciosCercanos $?sc))
+        ?restriccion <- (RestriccionServiciosCercanos)
+        =>
+        (modify ?restriccion (serviciosCercanos ?sc))
+        (assert (restriccion-servicios-cercanos-done))
+)
+
 (defrule fin-inferir-datos
 	(nuevo-cliente)
 	=>
@@ -680,14 +719,8 @@
 	=>
 	(if (not ?estricto) then (bind ?precioMax (precio-max-flexible ?precioMax)))
 	(if (<= ?precioMensual ?precioMax) then
-		; insertar como criterio cumplido
-		(bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
-		(slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) ?*crit-precio-max*)
-	else
-		; insertar como criterio no cumplido
-		(bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
-		(slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) ?*crit-precio-max*)
-	)
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-precio-max*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-precio-max*))
 )
 
 (defrule criterio-precio-min
@@ -697,14 +730,8 @@
 	(test (and (eq ?vivienda ?viviendaR) (neq ?precioMin -1.0)))
 	=>
 	(if (>= ?precioMensual ?precioMin) then
-		; insertar como criterio cumplido
-		(bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
-		(slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) ?*crit-precio-min*)
-	else
-		; insertar como criterio no cumplido
-		(bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
-		(slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) ?*crit-precio-min*)
-	)
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-precio-min*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-precio-min*))
 )
 
 ; Criterios sobre el número y tipo de dormitorios
@@ -716,14 +743,8 @@
         (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto TRUE)))
         =>
         (if (eq (length$ ?dormitorios) ?num) then
-                ; insertar como criterio cumplido
-                (bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
-                (slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) ?*crit-num-dorm*)
-        else
-                ; insertar como criterio no cumplido
-                (bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
-                (slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) ?*crit-num-dorm*)
-        )
+                (slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm*)
+        else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm*))
 )
 
 (defrule criterio-dormitorios-no-estricto
@@ -733,14 +754,8 @@
         (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto FALSE)))
         =>
         (if (>= (length$ ?dormitorios) ?num) then
-                ; insertar como criterio cumplido
-                (bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
-                (slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) ?*crit-num-dorm*)
-        else
-                ; insertar como criterio no cumplido
-                (bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
-                (slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) ?*crit-num-dorm*)
-        )
+                (slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm*)
+        else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm*))
 )
 
 (defrule criterio-dormitorios-dobles-estricto
@@ -750,14 +765,8 @@
         (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto TRUE)))
         =>
         (if (eq (num-apariciones-lista DOBLE ?dormitorios) ?num) then
-                ; insertar como criterio cumplido
-                (bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
-                (slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) ?*crit-num-dorm-dobles*)
-        else
-                ; insertar como criterio no cumplido
-                (bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
-                (slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) ?*crit-num-dorm-dobles*)
-        )
+                (slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm-dobles*)
+        else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm-dobles*))
 )
 
 (defrule criterio-dormitorios-dobles-no-estricto
@@ -767,12 +776,6 @@
         (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto FALSE)))
         =>
         (if (>= (num-apariciones-lista DOBLE ?dormitorios) ?num) then
-                ; insertar como criterio cumplido
-                (bind ?size (length$ (send ?recomendacion get-criteriosCumplidos)))
-                (slot-insert$ ?recomendacion criteriosCumplidos (+ ?size 1) ?*crit-num-dorm-dobles*)
-        else
-                ; insertar como criterio no cumplido
-                (bind ?size (length$ (send ?recomendacion get-criteriosNoCumplidos)))
-                (slot-insert$ ?recomendacion criteriosNoCumplidos (+ ?size 1) ?*crit-num-dorm-dobles*)
-        )
+                (slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm-dobles*)
+        else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm-dobles*))
 )
