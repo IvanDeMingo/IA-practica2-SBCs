@@ -621,6 +621,38 @@
         (assert (servicios-cercanos-done))
 )
 
+(defrule edad-solicitantes
+	(nuevo-cliente)
+	(not (edad-solicitantes-done))
+	?cliente <- (Cliente)
+	=>
+	(bind $?edades (pregunta-lista "Escribe las edades de los solicitantes separadas por espacios: "))
+	(modify ?cliente (edadSolicitantes ?edades))
+	(assert (edad-solicitantes-done))
+)
+
+(defrule tipologia-solicitantes
+	(nuevo-cliente)
+	(not (tipologia-solicitantes-done))
+	?cliente <- (Cliente)
+	=>
+	(printout t "Tipologías:" crlf)
+	(printout t "0 - Pareja sin hijos" crlf)
+	(printout t "1 - Pareja con previsiones de hijos en un futuro" crlf)
+	(printout t "2 - Familia" crlf)
+	(printout t "3 - Estudiantes" crlf)
+	(printout t "4 - Individuo" crlf)
+	(bind ?tipologia (pregunta-numerica "Tipología de los solicitantes ((-1) si es indiferente)"))
+	(switch ?tipologia
+		(case 0 then (modify ?cliente (tipologiaSolicitantes PAREJA-SIN-HIJOS)))
+		(case 1 then (modify ?cliente (tipologiaSolicitantes PAREJA-HIJOS-FUTURO)))
+		(case 2 then (modify ?cliente (tipologiaSolicitantes FAMILIA)))
+		(case 3 then (modify ?cliente (tipologiaSolicitantes ESTUDIANTES)))
+		(case 4 then (modify ?cliente (tipologiaSolicitantes INDIVIDUO)))
+	)
+	(assert (tipologia-solicitantes-done))
+)
+
 (defrule fin-preguntas
 	(nuevo-cliente)
 	=>
@@ -672,9 +704,19 @@
 (defrule restriccion-servicios-cercanos
         (nuevo-cliente)
         (not (restriccion-servicios-cercanos-done))
-        ?cliente <- (Cliente (serviciosCercanos $?sc))
+        ?cliente <- (Cliente (serviciosCercanos $?sc) (edadSolicitantes $?es) (tipologiaSolicitantes $?ts))
         ?restriccion <- (RestriccionServiciosCercanos)
         =>
+		(bind ?servicio INDEF)
+		(switch ?ts
+			(case PAREJA-SIN-HIJOS then (bind ?servicio ZONA-OCIO))
+			(case PAREJA-HIJOS-FUTURO then (bind ?servicio COLEGIO))
+			(case FAMILIA then (bind ?servicio COLEGIO))
+			(case ESTUDIANTES then (bind ?servicio ZONA-OCIO))
+		)
+		(if (not (eq ?servicio INDEF)) then
+			(if (eq num-apariciones-lista(?servicio ?sc) 0) then (bind $?sc (insert$ ?sc 1 ?servicio)))
+		)
         (modify ?restriccion (serviciosCercanos ?sc))
         (assert (restriccion-servicios-cercanos-done))
 )
