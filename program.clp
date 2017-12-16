@@ -467,6 +467,13 @@
 (defglobal ?*crit-num-dorm-dobles* = "Número de dormitorios dobles")
 
 (defglobal ?*crit-soleada* = "Soleada")
+(defglobal ?*crit-serv-cerc* = "Servicio cercano")
+
+; Distancias
+
+(defglobal ?*dist-corta* = 15)
+(defglobal ?*dist-media* = 25)
+(defglobal ?*dist-larga* = 50)
 
 ;;;--------------------------------------------------------------------------;;;
 ;;;------------------------- FUNCIONES AUXILIARES ---------------------------;;;
@@ -532,6 +539,24 @@
 
 (deffunction precio-max-flexible (?precio)
 	(* ?precio 1.1) ; Margen del 10%
+)
+
+(deffunction distancia (?ubA ?ubB)
+        ; ?ubA y ?ubB son instancias de la clase Ubicacion
+        (bind ?ax (send ?ubA get-coordX))
+        (bind ?ay (send ?ubA get-coordY))
+        (bind ?bx (send ?ubB get-coordX))
+        (bind ?by (send ?ubB get-coordY))
+        (bind ?distancia (sqrt (+ (** (- ?bx ?ax) 2) (** (- ?by ?ay) 2))))
+        (bind ?d (
+                if (> ?distancia ?*dist-corta*) 
+                then (
+                        if (< ?distancia ?*dist-larga*)
+                        then MEDIA
+                        else LARGA
+                ) 
+                else CERCA
+        ))
 )
 
 ; Listas
@@ -624,9 +649,9 @@
 	(bind $?lista (create$))
 	(progn$ (?s ?servicios)
 			(switch ?s
-					(case 0 then (bind $?lista (insert$ ?lista 1 COLEGIO)))
-					(case 1 then (bind $?lista (insert$ ?lista 1 HOSPITAL)))
-					(case 2 then (bind $?lista (insert$ ?lista 1 ZONA-OCIO)))
+					(case 0 then (bind ?lista (insert$ ?lista 1 COLEGIO)))
+					(case 1 then (bind ?lista (insert$ ?lista 1 HOSPITAL)))
+					(case 2 then (bind ?lista (insert$ ?lista 1 ZONA-OCIO)))
 			)
 	)
 	(modify ?cliente (serviciosCercanos ?lista))
@@ -736,23 +761,13 @@
 )
 
 (defrule restriccion-servicios-cercanos
-	(nuevo-cliente)
-	(not (restriccion-servicios-cercanos-done))
-	?cliente <- (Cliente (serviciosCercanos $?sc) (edadSolicitantes $?es) (tipologiaSolicitantes ?ts))
-	?restriccion <- (RestriccionServiciosCercanos)
-	=>
-	(bind ?servicio INDEF)
-	(switch ?ts
-		(case PAREJA-SIN-HIJOS then (bind ?servicio ZONA-OCIO))
-		(case PAREJA-HIJOS-FUTURO then (bind ?servicio COLEGIO))
-		(case FAMILIA then (bind ?servicio COLEGIO))
-		(case ESTUDIANTES then (bind ?servicio ZONA-OCIO))
-	)
-	(if (not (eq ?servicio INDEF)) then
-		(if (eq num-apariciones-lista(?servicio ?sc) 0) then (bind $?sc (insert$ ?sc 1 ?servicio)))
-	)
-	(modify ?restriccion (serviciosCercanos ?sc))
-	(assert (restriccion-servicios-cercanos-done))
+        (nuevo-cliente)
+        (not (restriccion-servicios-cercanos-done))
+        ?cliente <- (Cliente (serviciosCercanos $?sc))
+        ?restriccion <- (RestriccionServiciosCercanos)
+        =>
+        (modify ?restriccion (serviciosCercanos ?sc))
+        (assert (restriccion-servicios-cercanos-done))
 )
 
 (defrule restriccion-soleada
@@ -869,6 +884,20 @@
 	(if (>= (num-apariciones-lista DOBLE ?dormitorios) ?num) then
 			(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm-dobles*)
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm-dobles*))
+)
+
+; Criterios sobre los servicios cercanos
+
+(defrule criterio-servicios-cercanos
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (ubicacionVivienda ?ubicacionV))
+	?servicio <- (object (is-a Servicio) (tipoServicio ?tipoS) (ubicacionServicio ?ubicacionS))
+	(RestriccionServiciosCercanos (serviciosCercanos $?sc))
+	(test (and (eq ?vivienda ?viviendaR) (member ?tipoS ?sc)))
+	=>
+	(if (eq (distancia ?ubicacionV ?ubicacionS) CERCA) then 
+			(slot-insert$ ?recomendacion criteriosCumplidos 1 (str-cat ?*crit-serv-cerc* " - " ?tipoS))
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 (str-cat ?*crit-serv-cerc* " - " ?tipoS)))
 )
 
 ; Criterios sobre la vivienda soleada
