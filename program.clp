@@ -428,6 +428,12 @@
 		(allowed-values MANANA TARDE TODO-EL-DIA NO INDEF)
 		(default INDEF)
 	)
+
+	(slot amueblada
+		(type SYMBOL)
+		(allowed-values TRUE FALSE INDEF)
+		(default INDEF)
+	)
 )
 
 ;;;--------------------------------------------------------------------------;;;
@@ -454,6 +460,10 @@
 	(slot soleada (type SYMBOL) (allowed-values MANANA TARDE TODO-EL-DIA NO INDEF) (default INDEF))
 )
 
+(deftemplate RestriccionAmueblada
+	(slot amueblada (type SYMBOL) (allowed-values TRUE FALSE INDEF) (default INDEF))
+)
+
 ;;;--------------------------------------------------------------------------;;;
 ;;;-------------------------- VARIABLES GLOBALES ----------------------------;;;
 ;;;--------------------------------------------------------------------------;;;
@@ -467,6 +477,9 @@
 (defglobal ?*crit-num-dorm-dobles* = "Número de dormitorios dobles")
 
 (defglobal ?*crit-soleada* = "Soleada")
+
+(defglobal ?*crit-amueblada* = "Amueblada")
+
 (defglobal ?*crit-serv-cerc* = "Servicio cercano")
 
 ; Distancias
@@ -525,6 +538,17 @@
 	(if (or (eq (lowcase ?respuesta) si) (eq (lowcase ?respuesta) s))
 		then TRUE
 		else FALSE
+	)
+)
+
+(deffunction si-o-no-p-indef (?pregunta)
+	(bind ?respuesta (pregunta ?pregunta si no s n))
+	(if (or (eq (lowcase ?respuesta) si) (eq (lowcase ?respuesta) s))
+		then TRUE
+		else (if (or (eq (lowcase ?respuesta) no) (eq (lowcase ?respuesta) n))
+			then FALSE
+			else INDEF
+		)
 	)
 )
 
@@ -710,6 +734,16 @@
 	(assert (tipo-soleado-done))
 )
 
+(defrule vivienda-amueblada
+	(nuevo-cliente)
+	(not (vivienda-amueblada-done))
+	?cliente <- (Cliente)
+	=>
+	(bind ?amueblada (si-o-no-p-indef "La casa tiene que estar amueblada ((-1) si es indiferente)"))
+	(modify ?cliente (amueblada ?amueblada))
+	(assert (vivienda-amueblada-done))
+)
+
 (defrule fin-preguntas
 	(nuevo-cliente)
 	=>
@@ -733,11 +767,13 @@
 	(not (RestriccionDormitorios))
 	(not (RestriccionServiciosCercanos))
 	(not (RestriccionSoleada))
+	(not (RestriccionAmueblada))
 	=>
 	(assert (RestriccionPrecio))
 	(assert (RestriccionDormitorios))
 	(assert (RestriccionServiciosCercanos))
 	(assert (RestriccionSoleada))
+	(assert (RestriccionAmueblada))
 )
 
 (defrule restriccion-precio
@@ -780,12 +816,23 @@
 	(assert (restriccion-soleada-done))
 )
 
+(defrule restriccion-amueblada
+	(nuevo-cliente)
+	(not (restriccion-amueblada-done))
+	?cliente <- (Cliente (amueblada ?a))
+	?restriccion <- (RestriccionAmueblada)
+	=>
+	(modify ?restriccion (amueblada ?a))
+	(assert (restriccion-amueblada-done))
+)
+
 (defrule fin-inferir-datos
 	(nuevo-cliente)
 	(restriccion-precio-done)
 	(restriccion-dormitorios-done)
 	(restriccion-servicios-cercanos-done)
 	(restriccion-soleada-done)
+	(restriccion-amueblada-done)
 	=>
 	(printout t "Abstracción de datos finalizada" crlf)
 	(focus filtrado)
@@ -908,8 +955,20 @@
 	(RestriccionSoleada (soleada ?sol))
 	(test (and (eq ?vivienda ?viviendaR) (neq ?sol INDEF)))
 	=>
-	(printout t "Recomendacion: " ?sol ", Vivienda: " ?soleada crlf)
 	(if (eq ?soleada ?sol) then
 		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-soleada*)
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-soleada*))
+)
+
+; Criterios sobre la vivienda amueblada
+
+(defrule criterio-amueblada
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (amueblada ?amueblada))
+	(RestriccionAmueblada (amueblada ?am))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?am INDEF)))
+	=>
+	(if (eq ?amueblada ?am) then
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-amueblada*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-amueblada*))
 )
