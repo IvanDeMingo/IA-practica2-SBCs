@@ -738,7 +738,7 @@
 (defrule restriccion-servicios-cercanos
 	(nuevo-cliente)
 	(not (restriccion-servicios-cercanos-done))
-	?cliente <- (Cliente (serviciosCercanos $?sc) (edadSolicitantes $?es) (tipologiaSolicitantes $?ts))
+	?cliente <- (Cliente (serviciosCercanos $?sc) (edadSolicitantes $?es) (tipologiaSolicitantes ?ts))
 	?restriccion <- (RestriccionServiciosCercanos)
 	=>
 	(bind ?servicio INDEF)
@@ -758,7 +758,7 @@
 (defrule restriccion-soleada
 	(nuevo-cliente)
 	(not (restriccion-soleada-done))
-	?cliente <- (Cliente (soleada $?s))
+	?cliente <- (Cliente (soleada ?s))
 	?restriccion <- (RestriccionSoleada)
 	=>
 	(modify ?restriccion (soleada ?s))
@@ -767,6 +767,10 @@
 
 (defrule fin-inferir-datos
 	(nuevo-cliente)
+	(restriccion-precio-done)
+	(restriccion-dormitorios-done)
+	(restriccion-servicios-cercanos-done)
+	(restriccion-soleada-done)
 	=>
 	(printout t "Abstracción de datos finalizada" crlf)
 	(focus filtrado)
