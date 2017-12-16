@@ -413,7 +413,18 @@
 	(slot margenEstrictoDormitorios (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
 	(slot numeroDormitoriosDobles (type INTEGER) (default -1))
 
-	(multislot serviciosCercanos (type SYMBOL) (allowed-values COLEGIO HOSPITAL ZONA-OCIO))
+	(multislot serviciosCercanos (type SYMBOL) 
+                (allowed-values 
+                        COLEGIO
+                        UNIVERSIDAD
+                        HOSPITAL
+                        ZONA-OCIO
+                        TRANSPORTE-PUBLICO
+                        ZONA-COMERCIAL
+                        SUPERMERCADO
+                        CENTRO-DE-SALUD
+                        ZONA-VERDE)
+        )
 	(slot prefiereTransPublico (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
 
 	(multislot edadSolicitantes (type INTEGER))
@@ -447,7 +458,34 @@
 )
 
 (deftemplate RestriccionServiciosCercanos
-	(multislot serviciosCercanos (type SYMBOL) (allowed-values COLEGIO HOSPITAL ZONA-OCIO))
+        ; Servicios cercanos indicados por el usuario
+	(multislot serviciosCercanos (type SYMBOL)
+                (allowed-values 
+                        COLEGIO
+                        HOSPITAL
+                        ZONA-OCIO
+                        TRANSPORTE-PUBLICO
+                        ZONA-COMERCIAL
+                        SUPERMERCADO
+                        CENTRO-DE-SALUD
+                        ZONA-VERDE)
+        )
+)
+
+(deftemplate PreferenciaServiciosCercanos
+        ; Servicios cercanos no indicados explícitamente, pero que dan más 
+        ; puntos a una vivienda según la edad y tipología de los solicitantes
+        (multislot serviciosCercanos (type SYMBOL)
+                (allowed-values 
+                        COLEGIO
+                        HOSPITAL
+                        ZONA-OCIO
+                        TRANSPORTE-PUBLICO
+                        ZONA-COMERCIAL
+                        SUPERMERCADO
+                        CENTRO-DE-SALUD
+                        ZONA-VERDE)
+        )
 )
 
 (deftemplate RestriccionSoleada
@@ -732,11 +770,13 @@
 	(not (RestriccionPrecio))
 	(not (RestriccionDormitorios))
 	(not (RestriccionServiciosCercanos))
+        (not (PreferenciaServiciosCercanos))
 	(not (RestriccionSoleada))
 	=>
 	(assert (RestriccionPrecio))
 	(assert (RestriccionDormitorios))
 	(assert (RestriccionServiciosCercanos))
+        (assert (PreferenciaServiciosCercanos))
 	(assert (RestriccionSoleada))
 )
 
@@ -765,9 +805,47 @@
         (not (restriccion-servicios-cercanos-done))
         ?cliente <- (Cliente (serviciosCercanos $?sc))
         ?restriccion <- (RestriccionServiciosCercanos)
+        (test (> (length$ ?sc) 0))
         =>
         (modify ?restriccion (serviciosCercanos ?sc))
         (assert (restriccion-servicios-cercanos-done))
+)
+
+(defrule preferencia-servicios-cercanos-edad-solicitantes
+        (nuevo-cliente)
+        (not (preferencia-servicios-cercanos-edad-solicitantes-done))
+        ?cliente <- (Cliente (edadSolicitantes $?es))
+        ?preferencia <- (PreferenciaServiciosCercanos (serviciosCercanos $?sc))
+        (test (> (length$ ?es) 0))
+        =>
+        (printout t "PREFERENCIA EDAD SOLICITANTES" crlf)
+        (bind $?lista (create$))
+        (progn$ (?edad ?es)
+                (if (< ?edad 18) then (bind ?lista (insert$ ?lista 1 COLEGIO))
+                else (if (<= ?edad 25) then (bind ?lista (insert$ ?lista 1 ZONA-OCIO))))
+                (if (> ?edad 65) then (bind ?lista (insert$ ?lista 1 CENTRO-DE-SALUD)))
+                (if (> ?edad 50) then (bind ?lista (insert$ ?lista 1 ZONA-VERDE)))
+        )
+        (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 ?lista)))
+        (assert (preferencia-servicios-cercanos-edad-solicitantes-done))
+)
+
+(defrule preferencia-servicios-cercanos-tipologia-solicitantes
+        (nuevo-cliente)
+        (not (preferencia-servicios-cercanos-tipologia-solicitantes-done))
+        ?cliente <- (Cliente (tipologiaSolicitantes ?ts))
+        ?preferencia <- (PreferenciaServiciosCercanos (serviciosCercanos $?sc))
+        (test (neq ?ts INDEF))
+        =>
+        (printout t "PREFERENCIA TIPOLOGIA SOLICITANTES" crlf)
+        (switch ?ts
+                (case PAREJA-SIN-HIJOS then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 ZONA-OCIO))))
+                (case PAREJA-HIJOS-FUTURO then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 COLEGIO))))
+                ;(case FAMILIA then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 COLEGIO))))
+                (case ESTUDIANTES then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 ZONA-OCIO))))
+                ;(case INDIVIDUO then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 ZONA-OCIO))))
+        )
+        (assert (preferencia-servicios-cercanos-tipologia-solicitantes-done))
 )
 
 (defrule restriccion-soleada
@@ -782,10 +860,6 @@
 
 (defrule fin-inferir-datos
 	(nuevo-cliente)
-	(restriccion-precio-done)
-	(restriccion-dormitorios-done)
-	(restriccion-servicios-cercanos-done)
-	(restriccion-soleada-done)
 	=>
 	(printout t "Abstracción de datos finalizada" crlf)
 	(focus filtrado)
@@ -849,7 +923,7 @@
 	=>
 	(printout t "Dorm: " ?num crlf)
 	(if (eq (length$ ?dormitorios) ?num) then
-			(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm*)
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm*)
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm*))
 )
 
@@ -860,7 +934,7 @@
 	(test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto FALSE)))
 	=>
 	(if (>= (length$ ?dormitorios) ?num) then
-			(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm*)
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm*)
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm*))
 )
 
@@ -871,7 +945,7 @@
 	(test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto TRUE)))
 	=>
 	(if (eq (num-apariciones-lista DOBLE ?dormitorios) ?num) then
-			(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm-dobles*)
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm-dobles*)
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm-dobles*))
 )
 
@@ -882,7 +956,7 @@
 	(test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto FALSE)))
 	=>
 	(if (>= (num-apariciones-lista DOBLE ?dormitorios) ?num) then
-			(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm-dobles*)
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm-dobles*)
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm-dobles*))
 )
 
@@ -896,8 +970,19 @@
 	(test (and (eq ?vivienda ?viviendaR) (member ?tipoS ?sc)))
 	=>
 	(if (eq (distancia ?ubicacionV ?ubicacionS) CERCA) then 
-			(slot-insert$ ?recomendacion criteriosCumplidos 1 (str-cat ?*crit-serv-cerc* " - " ?tipoS))
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 (str-cat ?*crit-serv-cerc* " - " ?tipoS))
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 (str-cat ?*crit-serv-cerc* " - " ?tipoS)))
+)
+
+(defrule criterio-extra-servicios-cercanos
+        ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+        ?vivienda <- (object (is-a ViviendaAlquiler) (ubicacionVivienda ?ubicacionV))
+        ?servicio <- (object (is-a Servicio) (tipoServicio ?tipoS) (ubicacionServicio ?ubicacionS))
+        (PreferenciaServiciosCercanos (serviciosCercanos $?sc))
+        (test (and (eq ?vivienda ?viviendaR) (member ?tipoS ?sc)))
+        =>
+        (if (eq (distancia ?ubicacionV ?ubicacionS) CERCA) then 
+                (slot-insert$ ?recomendacion criteriosExtra 1 (str-cat ?*crit-serv-cerc* " - " ?tipoS)))
 )
 
 ; Criterios sobre la vivienda soleada
@@ -908,7 +993,6 @@
 	(RestriccionSoleada (soleada ?sol))
 	(test (and (eq ?vivienda ?viviendaR) (neq ?sol INDEF)))
 	=>
-	(printout t "Recomendacion: " ?sol ", Vivienda: " ?soleada crlf)
 	(if (eq ?soleada ?sol) then
 		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-soleada*)
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-soleada*))
