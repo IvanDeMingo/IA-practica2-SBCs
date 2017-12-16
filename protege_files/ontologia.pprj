@@ -1,4 +1,4 @@
-; Sat Dec 16 19:57:20 CET 2017
+; Sat Dec 16 20:07:13 CET 2017
 ; 
 ;+ (version "3.4.8")
 ;+ (build "Build 629")
@@ -20,12 +20,12 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[ontologia_ProjectKB_Class10148]
-		[ontologia_ProjectKB_Class10149]
-		[ontologia_ProjectKB_Class10150]
-		[ontologia_ProjectKB_Class10151]
-		[ontologia_ProjectKB_Class10152]
-		[ontologia_ProjectKB_Class10153]))
+		[ontologia_ProjectKB_Class97]
+		[ontologia_ProjectKB_Class98]
+		[ontologia_ProjectKB_Class99]
+		[ontologia_ProjectKB_Class100]
+		[ontologia_ProjectKB_Class101]
+		[ontologia_ProjectKB_Class102]))
 
 ([CLSES_TAB] of  Widget
 
@@ -166,7 +166,7 @@
 ([KB_317833_Class99] of  Property_List
 )
 
-([KB_671353_Class0] of  Map
+([KB_988288_Class0] of  Map
 )
 
 ([LAYOUT_PROPERTIES] of  Property_List
@@ -183,32 +183,17 @@
 ([ontologia_ProjectKB_Class10] of  Property_List
 )
 
-([ontologia_ProjectKB_Class10148] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([ontologia_ProjectKB_Class10149] of  String
-
-	(name "ViviendaAlquiler")
-	(string_value "precioMensual{}dormitorios"))
-
-([ontologia_ProjectKB_Class10150] of  String
-
-	(name "Barrio")
-	(string_value "clase{}situacion"))
-
-([ontologia_ProjectKB_Class10151] of  String
+([ontologia_ProjectKB_Class100] of  String
 
 	(name ":PAL-CONSTRAINT")
 	(string_value "%3APAL-NAME"))
 
-([ontologia_ProjectKB_Class10152] of  String
+([ontologia_ProjectKB_Class101] of  String
 
 	(name ":META-CLASS")
 	(string_value "%3ANAME"))
 
-([ontologia_ProjectKB_Class10153] of  String
+([ontologia_ProjectKB_Class102] of  String
 
 	(name "Servicio")
 	(string_value "tipoServicio"))
@@ -567,6 +552,21 @@
 	(is_hidden TRUE)
 	(property_list [ontologia_ProjectKB_Class10])
 	(widget_class_name "edu.stanford.smi.protegex.owl.ui.cls.OWLClassesTab"))
+
+([ontologia_ProjectKB_Class97] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([ontologia_ProjectKB_Class98] of  String
+
+	(name "ViviendaAlquiler")
+	(string_value "precioMensual{}dormitorios"))
+
+([ontologia_ProjectKB_Class99] of  String
+
+	(name "Barrio")
+	(string_value "clase{}situacion"))
 
 ([option_instance] of  Options
 

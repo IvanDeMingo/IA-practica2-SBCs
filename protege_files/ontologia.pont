@@ -1,4 +1,4 @@
-; Sat Dec 16 19:57:20 CET 2017
+; Sat Dec 16 20:07:13 CET 2017
 ; 
 ;+ (version "3.4.8")
 ;+ (build "Build 629")
@@ -149,7 +149,7 @@
 		(create-accessor read-write))
 	(single-slot tipoServicio
 		(type SYMBOL)
-		(allowed-values COLEGIO HOSPITAL ZONA-OCIO)
+		(allowed-values COLEGIO HOSPITAL ZONA-OCIO TRANSPORTE-PUBLICO ZONA-COMERCIAL SUPERMERCADO CENTRO-DE-SALUD ZONA-VERDE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
@@ -263,7 +263,7 @@
 	(role concrete)
 	(single-slot tipoServicio
 		(type SYMBOL)
-		(allowed-values COLEGIO HOSPITAL ZONA-OCIO)
+		(allowed-values COLEGIO HOSPITAL ZONA-OCIO TRANSPORTE-PUBLICO ZONA-COMERCIAL SUPERMERCADO CENTRO-DE-SALUD ZONA-VERDE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot ubicacionServicio

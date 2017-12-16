@@ -1,7 +1,57 @@
-; Sat Dec 16 19:57:20 CET 2017
+; Sat Dec 16 20:07:13 CET 2017
 ; 
 ;+ (version "3.4.8")
 ;+ (build "Build 629")
+
+([ontologia_Class0] of  Servicio
+
+	(tipoServicio TRANSPORTE-PUBLICO)
+	(ubicacionServicio [ontologia_Class1]))
+
+([ontologia_Class1] of  Ubicacion
+
+	(coordX 2.0)
+	(coordY 11.0))
+
+([ontologia_Class10] of  Servicio
+
+	(tipoServicio ZONA-COMERCIAL)
+	(ubicacionServicio [ontologia_Class11]))
+
+([ontologia_Class10015] of  Ubicacion
+
+	(coordX 15.0)
+	(coordY 13.0))
+
+([ontologia_Class10016] of  Servicio
+
+	(tipoServicio CENTRO-DE-SALUD)
+	(ubicacionServicio [ontologia_Class10017]))
+
+([ontologia_Class10017] of  Ubicacion
+
+	(coordX 34.0)
+	(coordY 89.0))
+
+([ontologia_Class10018] of  Servicio
+
+	(tipoServicio CENTRO-DE-SALUD)
+	(ubicacionServicio [ontologia_Class10019]))
+
+([ontologia_Class10019] of  Ubicacion
+
+	(coordX 78.0)
+	(coordY 9.0))
+
+([ontologia_Class10020] of  Servicio
+
+	(tipoServicio ZONA-VERDE)
+	(ubicacionServicio [ontologia_Class10021]))
+
+([ontologia_Class10021] of  Ubicacion
+
+	(coordX 50.0)
+	(coordY 67.0))
 
 ([ontologia_Class10022] of  Ubicacion
 
@@ -46,6 +96,26 @@
 	(coordX 16.0)
 	(coordY 63.0))
 
+([ontologia_Class11] of  Ubicacion
+
+	(coordX 60.0)
+	(coordY 12.0))
+
+([ontologia_Class12] of  Servicio
+
+	(tipoServicio SUPERMERCADO)
+	(ubicacionServicio [ontologia_Class13]))
+
+([ontologia_Class13] of  Ubicacion
+
+	(coordX 33.0)
+	(coordY 87.0))
+
+([ontologia_Class14] of  Servicio
+
+	(tipoServicio SUPERMERCADO)
+	(ubicacionServicio [ontologia_Class10015]))
+
 ([ontologia_Class15] of  Barrio
 
 	(clase BAJA)
@@ -73,6 +143,11 @@
 	(clase BAJA)
 	(situacion PERIFERIA)
 	(ubicacionBarrio [ontologia_Class20]))
+
+([ontologia_Class2] of  Servicio
+
+	(tipoServicio TRANSPORTE-PUBLICO)
+	(ubicacionServicio [ontologia_Class3]))
 
 ([ontologia_Class20] of  Ubicacion
 
@@ -154,6 +229,11 @@
 	(tipoVivienda PISO)
 	(ubicacionVivienda [ontologia_Class30])
 	(vistas FALSE))
+
+([ontologia_Class3] of  Ubicacion
+
+	(coordX 10.0)
+	(coordY 25.0))
 
 ([ontologia_Class30] of  Ubicacion
 
@@ -280,6 +360,11 @@
 	(ubicacionVivienda [ontologia_Class40])
 	(vistas FALSE))
 
+([ontologia_Class4] of  Servicio
+
+	(tipoServicio TRANSPORTE-PUBLICO)
+	(ubicacionServicio [ontologia_Class5]))
+
 ([ontologia_Class40] of  Ubicacion
 
 	(coordX 12.0)
@@ -390,6 +475,11 @@
 	(tipoServicio COLEGIO)
 	(ubicacionServicio [ontologia_Class50]))
 
+([ontologia_Class5] of  Ubicacion
+
+	(coordX 70.0)
+	(coordY 17.0))
+
 ([ontologia_Class50] of  Ubicacion
 
 	(coordX 65.0)
@@ -434,3 +524,23 @@
 
 	(coordX 60.0)
 	(coordY 90.0))
+
+([ontologia_Class6] of  Servicio
+
+	(tipoServicio TRANSPORTE-PUBLICO)
+	(ubicacionServicio [ontologia_Class7]))
+
+([ontologia_Class7] of  Ubicacion
+
+	(coordX 45.0)
+	(coordY 67.0))
+
+([ontologia_Class8] of  Servicio
+
+	(tipoServicio ZONA-COMERCIAL)
+	(ubicacionServicio [ontologia_Class9]))
+
+([ontologia_Class9] of  Ubicacion
+
+	(coordX 15.0)
+	(coordY 70.0))
