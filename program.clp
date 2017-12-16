@@ -906,11 +906,6 @@
 
 (defrule fin-inferir-datos
 	(nuevo-cliente)
-	(restriccion-precio-done)
-	(restriccion-dormitorios-done)
-	(restriccion-servicios-cercanos-done)
-	(restriccion-soleada-done)
-	(restriccion-amueblada-done)
 	=>
 	(printout t "Abstracción de datos finalizada" crlf)
 	(focus filtrado)
