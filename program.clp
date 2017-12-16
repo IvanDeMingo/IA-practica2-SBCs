@@ -627,11 +627,11 @@
 	=>
 	(bind ?dorm (pregunta-numerica "Número de dormitorios ((-1) si es indiferente)"))
 	(if (> ?dorm -1) then 
-			(bind ?dobles (pregunta-numerica "Número de dormitorios dobles ((-1) si es indiferente)"))
-			(bind ?estricto (si-o-no-p "Margen estricto"))
-			then (modify ?cliente (numeroDormitorios ?dorm) 
-					(numeroDormitoriosDobles ?dobles) 
-					(margenEstrictoDormitorios ?estricto))
+		(bind ?dobles (pregunta-numerica "Número de dormitorios dobles ((-1) si es indiferente)"))
+		(bind ?estricto (si-o-no-p "Margen estricto"))
+		then (modify ?cliente (numeroDormitorios ?dorm) 
+			(numeroDormitoriosDobles ?dobles) 
+			(margenEstrictoDormitorios ?estricto))
 	)
 	(assert (dormitorios-done))
 )
@@ -648,11 +648,11 @@
 	(bind $?servicios (pregunta-lista "Escribe los identificadores separados por espacios: "))
 	(bind $?lista (create$))
 	(progn$ (?s ?servicios)
-			(switch ?s
-					(case 0 then (bind ?lista (insert$ ?lista 1 COLEGIO)))
-					(case 1 then (bind ?lista (insert$ ?lista 1 HOSPITAL)))
-					(case 2 then (bind ?lista (insert$ ?lista 1 ZONA-OCIO)))
-			)
+		(switch ?s
+			(case 0 then (bind ?lista (insert$ ?lista 1 COLEGIO)))
+			(case 1 then (bind ?lista (insert$ ?lista 1 HOSPITAL)))
+			(case 2 then (bind ?lista (insert$ ?lista 1 ZONA-OCIO)))
+		)
 	)
 	(modify ?cliente (serviciosCercanos ?lista))
 	(assert (servicios-cercanos-done))
@@ -695,12 +695,12 @@
 	(not (tipo-soleado-done))
 	?cliente <- (Cliente)
 	=>
-	(printout t "Piso soleado:" crlf)
+	(printout t "Vivienda soleada:" crlf)
 	(printout t "0 - Mañana" crlf)
 	(printout t "1 - Tarde" crlf)
 	(printout t "2 - Todo el día" crlf)
 	(printout t "3 - No" crlf)
-	(bind ?soleado (pregunta-numerica "El piso tiene que tener sol? ((-1) si es indiferente)"))
+	(bind ?soleado (pregunta-numerica "La vivienda tiene que tener sol ((-1) si es indiferente)"))
 	(switch ?soleado
 		(case 0 then (modify ?cliente (soleada MANANA)))
 		(case 1 then (modify ?cliente (soleada TARDE)))
@@ -904,13 +904,12 @@
 
 (defrule criterio-soleada
 	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
-	?vivienda <- (object (is-a ViviendaAlquiler) (soleada $?soleada))
+	?vivienda <- (object (is-a ViviendaAlquiler) (soleada ?soleada))
 	(RestriccionSoleada (soleada ?sol))
-	(test (and (eq ?vivienda ?viviendaR) (neq ?sol -1)))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?sol INDEF)))
 	=>
 	(printout t "Recomendacion: " ?sol ", Vivienda: " ?soleada crlf)
-	(if (eq (?soleada ?sol)) then
+	(if (eq ?soleada ?sol) then
 		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-soleada*)
-	)
-	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-soleada*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-soleada*))
 )
