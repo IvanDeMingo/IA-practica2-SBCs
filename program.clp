@@ -422,6 +422,12 @@
 		(allowed-values PAREJA-SIN-HIJOS PAREJA-HIJOS-FUTURO FAMILIA ESTUDIANTES INDIVIDUO INDEF)
 		(default INDEF)
 	)
+
+	(slot soleada
+		(type SYMBOL)
+		(allowed-values MANANA TARDE TODO-EL-DIA NO INDEF)
+		(default INDEF)
+	)
 )
 
 ;;;--------------------------------------------------------------------------;;;
@@ -444,6 +450,10 @@
 	(multislot serviciosCercanos (type SYMBOL) (allowed-values COLEGIO HOSPITAL ZONA-OCIO))
 )
 
+(deftemplate RestriccionSoleada
+	(slot soleada (type SYMBOL) (allowed-values MANANA TARDE TODO-EL-DIA NO INDEF) (default INDEF))
+)
+
 ;;;--------------------------------------------------------------------------;;;
 ;;;-------------------------- VARIABLES GLOBALES ----------------------------;;;
 ;;;--------------------------------------------------------------------------;;;
@@ -455,6 +465,8 @@
 
 (defglobal ?*crit-num-dorm* = "Número de dormitorios")
 (defglobal ?*crit-num-dorm-dobles* = "Número de dormitorios dobles")
+
+(defglobal ?*crit-soleada* = "Soleada")
 
 ;;;--------------------------------------------------------------------------;;;
 ;;;------------------------- FUNCIONES AUXILIARES ---------------------------;;;
@@ -584,41 +596,41 @@
 )
 
 (defrule dormitorios
-        (nuevo-cliente)
-        (not (dormitorios-done))
-        ?cliente <- (Cliente)
-        =>
-        (bind ?dorm (pregunta-numerica "Número de dormitorios ((-1) si es indiferente)"))
-        (if (> ?dorm -1) then 
-                (bind ?dobles (pregunta-numerica "Número de dormitorios dobles ((-1) si es indiferente)"))
-                (bind ?estricto (si-o-no-p "Margen estricto"))
-                then (modify ?cliente (numeroDormitorios ?dorm) 
-                        (numeroDormitoriosDobles ?dobles) 
-                        (margenEstrictoDormitorios ?estricto))
-        )
-        (assert (dormitorios-done))
+	(nuevo-cliente)
+	(not (dormitorios-done))
+	?cliente <- (Cliente)
+	=>
+	(bind ?dorm (pregunta-numerica "Número de dormitorios ((-1) si es indiferente)"))
+	(if (> ?dorm -1) then 
+			(bind ?dobles (pregunta-numerica "Número de dormitorios dobles ((-1) si es indiferente)"))
+			(bind ?estricto (si-o-no-p "Margen estricto"))
+			then (modify ?cliente (numeroDormitorios ?dorm) 
+					(numeroDormitoriosDobles ?dobles) 
+					(margenEstrictoDormitorios ?estricto))
+	)
+	(assert (dormitorios-done))
 )
 
 (defrule servicios-cercanos
-        (nuevo-cliente)
-        (not (servicios-cercanos-done))
-        ?cliente <- (Cliente)
-        =>
-        (printout t "Servicios cercanos:" crlf)
-        (printout t "0 - Colegio" crlf)
-        (printout t "1 - Hospital" crlf)
-        (printout t "2 - Zona de ocio" crlf)
-        (bind $?servicios (pregunta-lista "Escribe los identificadores separados por espacios: "))
-        (bind $?lista (create$))
-        (progn$ (?s ?servicios)
-                (switch ?s
-                        (case 0 then (bind $?lista (insert$ ?lista 1 COLEGIO)))
-                        (case 1 then (bind $?lista (insert$ ?lista 1 HOSPITAL)))
-                        (case 2 then (bind $?lista (insert$ ?lista 1 ZONA-OCIO)))
-                )
-        )
-        (modify ?cliente (serviciosCercanos ?lista))
-        (assert (servicios-cercanos-done))
+	(nuevo-cliente)
+	(not (servicios-cercanos-done))
+	?cliente <- (Cliente)
+	=>
+	(printout t "Servicios cercanos:" crlf)
+	(printout t "0 - Colegio" crlf)
+	(printout t "1 - Hospital" crlf)
+	(printout t "2 - Zona de ocio" crlf)
+	(bind $?servicios (pregunta-lista "Escribe los identificadores separados por espacios: "))
+	(bind $?lista (create$))
+	(progn$ (?s ?servicios)
+			(switch ?s
+					(case 0 then (bind $?lista (insert$ ?lista 1 COLEGIO)))
+					(case 1 then (bind $?lista (insert$ ?lista 1 HOSPITAL)))
+					(case 2 then (bind $?lista (insert$ ?lista 1 ZONA-OCIO)))
+			)
+	)
+	(modify ?cliente (serviciosCercanos ?lista))
+	(assert (servicios-cercanos-done))
 )
 
 (defrule edad-solicitantes
@@ -653,6 +665,26 @@
 	(assert (tipologia-solicitantes-done))
 )
 
+(defrule tipo-soleado
+	(nuevo-cliente)
+	(not (tipo-soleado-done))
+	?cliente <- (Cliente)
+	=>
+	(printout t "Piso soleado:" crlf)
+	(printout t "0 - Mañana" crlf)
+	(printout t "1 - Tarde" crlf)
+	(printout t "2 - Todo el día" crlf)
+	(printout t "3 - No" crlf)
+	(bind ?soleado (pregunta-numerica "El piso tiene que tener sol? ((-1) si es indiferente)"))
+	(switch ?soleado
+		(case 0 then (modify ?cliente (soleada MANANA)))
+		(case 1 then (modify ?cliente (soleada TARDE)))
+		(case 2 then (modify ?cliente (soleada TODO-EL-DIA)))
+		(case 3 then (modify ?cliente (soleada NO)))
+	)
+	(assert (tipo-soleado-done))
+)
+
 (defrule fin-preguntas
 	(nuevo-cliente)
 	=>
@@ -673,52 +705,64 @@
 (defrule crear-restricciones
 	(nuevo-cliente)
 	(not (RestriccionPrecio))
-        (not (RestriccionDormitorios))
-        (not (RestriccionServiciosCercanos))
+	(not (RestriccionDormitorios))
+	(not (RestriccionServiciosCercanos))
+	(not (RestriccionSoleada))
 	=>
 	(assert (RestriccionPrecio))
-        (assert (RestriccionDormitorios))
-        (assert (RestriccionServiciosCercanos))
+	(assert (RestriccionDormitorios))
+	(assert (RestriccionServiciosCercanos))
+	(assert (RestriccionSoleada))
 )
 
 (defrule restriccion-precio
-        (nuevo-cliente)
-        (not (restriccion-precio-done))
-        ?cliente <- (Cliente (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto) (precioMin ?precioMin))
-        ?restriccion <- (RestriccionPrecio)
-        =>
-        (modify ?restriccion (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto) (precioMin ?precioMin))
-        (assert (restriccion-precio-done))
+	(nuevo-cliente)
+	(not (restriccion-precio-done))
+	?cliente <- (Cliente (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto) (precioMin ?precioMin))
+	?restriccion <- (RestriccionPrecio)
+	=>
+	(modify ?restriccion (precioMax ?precioMax) (margenEstrictoPrecioMax ?estricto) (precioMin ?precioMin))
+	(assert (restriccion-precio-done))
 )
 
 (defrule restriccion-dormitorios
-        (nuevo-cliente)
-        (not (restriccion-dormitorios-done))
-        ?cliente <- (Cliente (numeroDormitorios ?dorm) (margenEstrictoDormitorios ?estricto) (numeroDormitoriosDobles ?dobles))
-        ?restriccion <- (RestriccionDormitorios)
-        =>
-        (modify ?restriccion (numeroDormitorios ?dorm) (margenEstrictoDormitorios ?estricto) (numeroDormitoriosDobles ?dobles))
-        (assert (restriccion-dormitorios-done))
+	(nuevo-cliente)
+	(not (restriccion-dormitorios-done))
+	?cliente <- (Cliente (numeroDormitorios ?dorm) (margenEstrictoDormitorios ?estricto) (numeroDormitoriosDobles ?dobles))
+	?restriccion <- (RestriccionDormitorios)
+	=>
+	(modify ?restriccion (numeroDormitorios ?dorm) (margenEstrictoDormitorios ?estricto) (numeroDormitoriosDobles ?dobles))
+	(assert (restriccion-dormitorios-done))
 )
 
 (defrule restriccion-servicios-cercanos
-        (nuevo-cliente)
-        (not (restriccion-servicios-cercanos-done))
-        ?cliente <- (Cliente (serviciosCercanos $?sc) (edadSolicitantes $?es) (tipologiaSolicitantes $?ts))
-        ?restriccion <- (RestriccionServiciosCercanos)
-        =>
-		(bind ?servicio INDEF)
-		(switch ?ts
-			(case PAREJA-SIN-HIJOS then (bind ?servicio ZONA-OCIO))
-			(case PAREJA-HIJOS-FUTURO then (bind ?servicio COLEGIO))
-			(case FAMILIA then (bind ?servicio COLEGIO))
-			(case ESTUDIANTES then (bind ?servicio ZONA-OCIO))
-		)
-		(if (not (eq ?servicio INDEF)) then
-			(if (eq num-apariciones-lista(?servicio ?sc) 0) then (bind $?sc (insert$ ?sc 1 ?servicio)))
-		)
-        (modify ?restriccion (serviciosCercanos ?sc))
-        (assert (restriccion-servicios-cercanos-done))
+	(nuevo-cliente)
+	(not (restriccion-servicios-cercanos-done))
+	?cliente <- (Cliente (serviciosCercanos $?sc) (edadSolicitantes $?es) (tipologiaSolicitantes $?ts))
+	?restriccion <- (RestriccionServiciosCercanos)
+	=>
+	(bind ?servicio INDEF)
+	(switch ?ts
+		(case PAREJA-SIN-HIJOS then (bind ?servicio ZONA-OCIO))
+		(case PAREJA-HIJOS-FUTURO then (bind ?servicio COLEGIO))
+		(case FAMILIA then (bind ?servicio COLEGIO))
+		(case ESTUDIANTES then (bind ?servicio ZONA-OCIO))
+	)
+	(if (not (eq ?servicio INDEF)) then
+		(if (eq num-apariciones-lista(?servicio ?sc) 0) then (bind $?sc (insert$ ?sc 1 ?servicio)))
+	)
+	(modify ?restriccion (serviciosCercanos ?sc))
+	(assert (restriccion-servicios-cercanos-done))
+)
+
+(defrule restriccion-soleada
+	(nuevo-cliente)
+	(not (restriccion-soleada-done))
+	?cliente <- (Cliente (soleada $?s))
+	?restriccion <- (RestriccionSoleada)
+	=>
+	(modify ?restriccion (soleada ?s))
+	(assert (restriccion-soleada-done))
 )
 
 (defrule fin-inferir-datos
@@ -779,45 +823,61 @@
 ; Criterios sobre el número y tipo de dormitorios
 
 (defrule criterio-dormitorios-estricto
-        ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
-        ?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
-        (RestriccionDormitorios (numeroDormitorios ?num) (margenEstrictoDormitorios ?estricto))
-        (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto TRUE)))
-        =>
-        (if (eq (length$ ?dormitorios) ?num) then
-                (slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm*)
-        else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm*))
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
+	(RestriccionDormitorios (numeroDormitorios ?num) (margenEstrictoDormitorios ?estricto))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto TRUE)))
+	=>
+	(printout t "Dorm: " ?num crlf)
+	(if (eq (length$ ?dormitorios) ?num) then
+			(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm*))
 )
 
 (defrule criterio-dormitorios-no-estricto
-        ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
-        ?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
-        (RestriccionDormitorios (numeroDormitorios ?num) (margenEstrictoDormitorios ?estricto))
-        (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto FALSE)))
-        =>
-        (if (>= (length$ ?dormitorios) ?num) then
-                (slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm*)
-        else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm*))
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
+	(RestriccionDormitorios (numeroDormitorios ?num) (margenEstrictoDormitorios ?estricto))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto FALSE)))
+	=>
+	(if (>= (length$ ?dormitorios) ?num) then
+			(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm*))
 )
 
 (defrule criterio-dormitorios-dobles-estricto
-        ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
-        ?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
-        (RestriccionDormitorios (numeroDormitoriosDobles ?num) (margenEstrictoDormitorios ?estricto))
-        (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto TRUE)))
-        =>
-        (if (eq (num-apariciones-lista DOBLE ?dormitorios) ?num) then
-                (slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm-dobles*)
-        else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm-dobles*))
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
+	(RestriccionDormitorios (numeroDormitoriosDobles ?num) (margenEstrictoDormitorios ?estricto))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto TRUE)))
+	=>
+	(if (eq (num-apariciones-lista DOBLE ?dormitorios) ?num) then
+			(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm-dobles*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm-dobles*))
 )
 
 (defrule criterio-dormitorios-dobles-no-estricto
-        ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
-        ?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
-        (RestriccionDormitorios (numeroDormitoriosDobles ?num) (margenEstrictoDormitorios ?estricto))
-        (test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto FALSE)))
-        =>
-        (if (>= (num-apariciones-lista DOBLE ?dormitorios) ?num) then
-                (slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm-dobles*)
-        else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm-dobles*))
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (dormitorios $?dormitorios))
+	(RestriccionDormitorios (numeroDormitoriosDobles ?num) (margenEstrictoDormitorios ?estricto))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto FALSE)))
+	=>
+	(if (>= (num-apariciones-lista DOBLE ?dormitorios) ?num) then
+			(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm-dobles*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm-dobles*))
+)
+
+; Criterios sobre la vivienda soleada
+
+(defrule criterio-soleada
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (soleada $?soleada))
+	(RestriccionSoleada (soleada ?sol))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?sol -1)))
+	=>
+	(printout t "Recomendacion: " ?sol ", Vivienda: " ?soleada crlf)
+	(if (eq (?soleada ?sol)) then
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-soleada*)
+	)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-soleada*)
 )
