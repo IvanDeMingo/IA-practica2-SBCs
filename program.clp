@@ -865,6 +865,8 @@
 ;;;--------------------------------------------------------------------------;;;
 
 (deftemplate Cliente
+        (slot tipoVivienda (type SYMBOL) (allowed-values PISO UNIFAMILIAR INDEF) (default INDEF))
+
 	(slot precioMax (type FLOAT) (default -1.0))
 	(slot margenEstrictoPrecioMax (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
 	(slot precioMin (type FLOAT) (default -1.0))
@@ -914,6 +916,10 @@
 ;;;--------------------------------------------------------------------------;;;
 ;;;----------------------- TEMPLATES: DATOS INFERIDOS -----------------------;;;
 ;;;--------------------------------------------------------------------------;;;
+
+(deftemplate RestriccionTipoVivienda
+        (slot tipo (type SYMBOL) (allowed-values PISO UNIFAMILIAR INDEF) (default INDEF))
+)
 
 (deftemplate RestriccionPrecio
 	(slot precioMax (type FLOAT))
@@ -975,6 +981,8 @@
 ;;;--------------------------------------------------------------------------;;;
 
 ; Criterios
+
+(defglobal ?*crit-tipo-vivienda* = "Tipo de vivienda")
 
 (defglobal ?*crit-precio-max* = "Precio máximo")
 (defglobal ?*crit-precio-min* = "Precio mínimo")
@@ -1164,6 +1172,22 @@
 	(assert (Cliente))
 )
 
+(defrule tipo-vivienda
+        (nuevo-cliente)
+        (not (tipo-vivienda-done))
+        ?cliente <- (Cliente)
+        =>
+        (printout t "Tipos de vivienda:" crlf)
+        (printout t "0 - Piso" crlf)
+        (printout t "1 - Vivienda unifamiliar" crlf)
+        (bind ?tipo (pregunta-numerica "Tipo de vivienda que está buscando ((-1) si es indiferente)"))
+        (switch ?tipo
+                (case 0 then (modify ?cliente (tipoVivienda PISO)))
+                (case 1 then (modify ?cliente (tipoVivienda UNIFAMILIAR)))
+        )
+        (assert (tipo-vivienda-done))
+)
+
 (defrule precio-maximo-mensual
 	(nuevo-cliente)
 	(not (precio-maximo-mensual-done))
@@ -1320,6 +1344,7 @@
 
 (defrule crear-restricciones
 	(nuevo-cliente)
+        (not (RestriccionTipoVivienda))
 	(not (RestriccionPrecio))
 	(not (RestriccionDormitorios))
 	(not (RestriccionServiciosCercanos))
@@ -1328,6 +1353,7 @@
 	(not (RestriccionAmueblada))
         (not (RestriccionBarrio))
 	=>
+        (assert (RestriccionTipoVivienda))
 	(assert (RestriccionPrecio))
 	(assert (RestriccionDormitorios))
 	(assert (RestriccionServiciosCercanos))
@@ -1335,6 +1361,16 @@
 	(assert (RestriccionSoleada))
 	(assert (RestriccionAmueblada))
         (assert (RestriccionBarrio))
+)
+
+(defrule restriccion-tipo-vivienda
+        (nuevo-cliente)
+        (not (restriccion-tipo-vivienda-done))
+        ?cliente <- (Cliente (tipoVivienda ?tipo))
+        ?restriccion <- (RestriccionTipoVivienda)
+        =>
+        (modify ?restriccion (tipo ?tipo))
+        (assert (restriccion-tipo-vivienda-done))
 )
 
 (defrule restriccion-precio
@@ -1473,6 +1509,19 @@
 		(send ?inst put-vivienda (instance-address (nth$ ?i ?all)))
 	)
 	(printout t "Instancias de Recomendacion creadas" crlf)
+)
+
+; Criterios sobre el tipo de vivienda
+
+(defrule criterio-tipo-vivienda
+        ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+        ?vivienda <- (object (is-a ViviendaAlquiler) (tipoVivienda ?tipoV))
+        (RestriccionTipoVivienda (tipo ?tipoR))
+        (test (and (eq ?vivienda ?viviendaR) (neq ?tipoR INDEF)))
+        =>
+        (if (eq ?tipoV ?tipoR) then
+                (slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-tipo-vivienda*)
+        else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-tipo-vivienda*))
 )
 
 ; Criterios sobre el precio
