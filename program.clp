@@ -1040,7 +1040,7 @@
 )
 
 (deffunction si-o-no-p-indef (?pregunta)
-	(bind ?respuesta (pregunta ?pregunta si no s n indef))
+	(bind ?respuesta (pregunta ?pregunta si no indef s n i))
 	(if (or (eq (lowcase ?respuesta) si) (eq (lowcase ?respuesta) s))
 		then TRUE
 		else (if (or (eq (lowcase ?respuesta) no) (eq (lowcase ?respuesta) n))
@@ -1051,10 +1051,10 @@
 )
 
 (deffunction pregunta-lista (?pregunta) 
-        (format t "%s" ?pregunta)  
-        (bind ?resposta (readline))  
-        (bind ?res (str-explode ?resposta))   
-        ?res
+	(format t "%s" ?pregunta)  
+	(bind ?resposta (readline))  
+	(bind ?res (str-explode ?resposta))   
+	?res
 )
 
 ; Cálculos
@@ -1108,10 +1108,10 @@
 ; Listas
 
 (deffunction num-apariciones-lista (?x ?lista)
-        ; Devuelve el número de veces que ?x aparece en ?lista
-        (bind ?count 0)
-        (progn$ (?elem ?lista) (if (eq ?x ?elem) then (bind ?count (+ ?count 1))))
-        ?count
+	; Devuelve el número de veces que ?x aparece en ?lista
+	(bind ?count 0)
+	(progn$ (?elem ?lista) (if (eq ?x ?elem) then (bind ?count (+ ?count 1))))
+	?count
 )
 
 ;;;--------------------------------------------------------------------------;;;
@@ -1299,14 +1299,14 @@
 	(not (RestriccionPrecio))
 	(not (RestriccionDormitorios))
 	(not (RestriccionServiciosCercanos))
-        (not (PreferenciaServiciosCercanos))
+    (not (PreferenciaServiciosCercanos))
 	(not (RestriccionSoleada))
 	(not (RestriccionAmueblada))
 	=>
 	(assert (RestriccionPrecio))
 	(assert (RestriccionDormitorios))
 	(assert (RestriccionServiciosCercanos))
-        (assert (PreferenciaServiciosCercanos))
+    (assert (PreferenciaServiciosCercanos))
 	(assert (RestriccionSoleada))
 	(assert (RestriccionAmueblada))
 )
@@ -1332,14 +1332,14 @@
 )
 
 (defrule restriccion-servicios-cercanos
-        (nuevo-cliente)
-        (not (restriccion-servicios-cercanos-done))
-        ?cliente <- (Cliente (serviciosCercanos $?sc))
-        ?restriccion <- (RestriccionServiciosCercanos)
-        (test (> (length$ ?sc) 0))
-        =>
-        (modify ?restriccion (serviciosCercanos ?sc))
-        (assert (restriccion-servicios-cercanos-done))
+	(nuevo-cliente)
+	(not (restriccion-servicios-cercanos-done))
+	?cliente <- (Cliente (serviciosCercanos $?sc))
+	?restriccion <- (RestriccionServiciosCercanos)
+	(test (> (length$ ?sc) 0))
+	=>
+	(modify ?restriccion (serviciosCercanos ?sc))
+	(assert (restriccion-servicios-cercanos-done))
 )
 
 (defrule preferencia-servicios-cercanos-edad-solicitantes
@@ -1415,16 +1415,16 @@
 )
 
 (defrule obtener-viviendas
-        (nuevo-cliente)
-        =>
-        (bind $?all (find-all-instances ((?inst ViviendaAlquiler)) TRUE))
-        (loop-for-count (?i 1 (length$ ?all)) do
-                (bind ?vivienda (nth$ ?i ?all))
-                (bind ?nombreInst (sym-cat vivienda ?i))
-                (bind ?inst (make-instance ?nombreInst of Recomendacion))
-                (send ?inst put-vivienda (instance-address (nth$ ?i ?all)))
-        )
-        (printout t "Instancias de Recomendacion creadas" crlf)
+	(nuevo-cliente)
+	=>
+	(bind $?all (find-all-instances ((?inst ViviendaAlquiler)) TRUE))
+	(loop-for-count (?i 1 (length$ ?all)) do
+		(bind ?vivienda (nth$ ?i ?all))
+		(bind ?nombreInst (sym-cat vivienda ?i))
+		(bind ?inst (make-instance ?nombreInst of Recomendacion))
+		(send ?inst put-vivienda (instance-address (nth$ ?i ?all)))
+	)
+	(printout t "Instancias de Recomendacion creadas" crlf)
 )
 
 ; Criterios sobre el precio
@@ -1460,7 +1460,6 @@
 	(RestriccionDormitorios (numeroDormitorios ?num) (margenEstrictoDormitorios ?estricto))
 	(test (and (eq ?vivienda ?viviendaR) (neq ?num -1) (eq ?estricto TRUE)))
 	=>
-	(printout t "Dorm: " ?num crlf)
 	(if (eq (length$ ?dormitorios) ?num) then
 		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-num-dorm*)
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-num-dorm*))
@@ -1548,4 +1547,60 @@
 	(if (eq ?amueblada ?am) then
 		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-amueblada*)
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-amueblada*))
+)
+
+(defrule fin-filtrado
+	(nuevo-cliente)
+	=>
+	(printout t "Filtrado finalizado" crlf)
+	(focus resultados)
+)
+
+;;;--------------------------------------------------------------------------;;;
+;;;--------------------------- MODULO DE RESULTADOS -------------------------;;;
+;;;--------------------------------------------------------------------------;;;
+
+(defmodule resultados
+	(import MAIN ?ALL)
+	(import filtrado ?ALL)
+	(export ?ALL)
+)
+
+(defrule generacion-puntuacion
+	(nuevo-cliente)
+	(not (generacion-puntuacion-done))
+	?recomendacion <- (object
+		(is-a Recomendacion)
+		(vivienda ?viviendaR)
+		(criteriosCumplidos $?criteriosCumplidos)
+		(criteriosNoCumplidos $?criteriosNoCumplidos)
+	)
+	=>
+	(bind ?puntuacion 0)
+
+	(loop-for-count (?i 1 (length$ ?criteriosCumplidos)) do
+		(bind ?criterio (nth$ ?i ?criteriosCumplidos))
+		(bind ?puntuacion (+ ?puntuacion 1))
+	) 
+
+	(loop-for-count (?i 1 (length$ ?criteriosNoCumplidos)) do
+		(bind ?criterio (nth$ ?i ?criteriosNoCumplidos))
+		(bind ?puntuacion (- ?puntuacion 1))
+	)
+
+	(send ?recomendacion put-grado ?puntuacion)
+	(assert (generacion-puntuacion-done))
+)
+
+(defrule generacion-resultados
+	(generacion-puntuacion-done)
+	?recomendacion <- (object
+		(is-a Recomendacion)
+		(vivienda ?viviendaR)
+		(criteriosCumplidos ?criteriosCumplidos)
+		(criteriosNoCumplidos ?criteriosNoCumplidos)
+		(grado ?grado)
+	)
+	=>
+	(printout t "Recomendacion: " ?viviendaR ", Grado: " ?grado crlf)
 )
