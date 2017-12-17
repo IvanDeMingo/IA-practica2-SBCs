@@ -911,6 +911,7 @@
 	)
 
 	(slot banos (type INTEGER) (default -1))
+	(slot margenEstrictoBanos (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
 )
 
 ;;;--------------------------------------------------------------------------;;;
@@ -969,7 +970,8 @@
 )
 
 (deftemplate RestriccionBanos
-	(slot banos (type FLOAT))
+	(slot banos (type INTEGER))
+	(slot margenEstrictoBanos (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
 )
 
 (deftemplate RestriccionBarrio
@@ -1315,7 +1317,10 @@
 	?cliente <- (Cliente)
 	=>
 	(bind ?banos (pregunta-numerica "Número de baños ((-1) si es indiferente)"))
-	(modify ?cliente (banos ?banos))
+	(if (> ?banos -1) then
+		(bind ?estricto (si-o-no-p "Margen estricto"))
+		(modify ?cliente (banos ?banos) (margenEstrictoBanos ?estricto))
+	)
 	(assert (banos-done))
 )
 
@@ -1468,10 +1473,10 @@
 (defrule restriccion-banos
 	(nuevo-cliente)
 	(not (restriccion-banos-done))
-	?cliente <- (Cliente (banos ?banos))
+	?cliente <- (Cliente (banos ?banos) (margenEstrictoBanos ?estricto))
 	?restriccion <- (RestriccionBanos)
 	=>
-	(modify ?restriccion (banos ?banos))
+	(modify ?restriccion (banos ?banos) (margenEstrictoBanos ?estricto))
 	(assert (restriccion-banos-done))
 )
 
@@ -1629,14 +1634,24 @@
 
 ; Criterio sobre el numero de banos
 
-(defrule criterio-banos
+(defrule criterio-banos-estricto
 	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
 	?vivienda <- (object (is-a ViviendaAlquiler) (banos ?banos))
-	(RestriccionBanos (banos ?ban))
-	(test (and (eq ?vivienda ?viviendaR) (neq ?ban -1)))
+	(RestriccionBanos (banos ?ban) (margenEstrictoBanos ?estricto))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?ban -1) (eq ?estricto TRUE)))
 	=>
-	(printout t "Baños vivienda: " ?banos ", Cliente: " ?ban crlf)
 	(if (eq ?banos ?ban) then
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-banos*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-banos*))
+)
+
+(defrule criterio-banos-no-estricto
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (banos ?banos))
+	(RestriccionBanos (banos ?ban) (margenEstrictoBanos ?estricto))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?ban -1) (eq ?estricto FALSE)))
+	=>
+	(if (>= ?banos ?ban) then
 		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-banos*)
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-banos*))
 )
