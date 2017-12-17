@@ -912,6 +912,8 @@
 
 	(slot banos (type INTEGER) (default -1))
 	(slot margenEstrictoBanos (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
+
+	(slot coches (type INTEGER) (default 0))
 )
 
 ;;;--------------------------------------------------------------------------;;;
@@ -978,6 +980,10 @@
 	(multislot clases (type SYMBOL) (allowed-values ALTA MEDIA BAJA))
 )
 
+(deftemplate RestriccionGaraje
+	(slot plazas (type INTEGER))
+)
+
 ;;;--------------------------------------------------------------------------;;;
 ;;;-------------------------- VARIABLES GLOBALES ----------------------------;;;
 ;;;--------------------------------------------------------------------------;;;
@@ -999,6 +1005,8 @@
 (defglobal ?*crit-serv-cerc* = "Servicio cercano")
 
 (defglobal ?*crit-clase-barrio* = "Clase barrio")
+
+(defglobal ?*crit-garaje* = "Garaje")
 
 ; Distancias
 
@@ -1324,6 +1332,16 @@
 	(assert (banos-done))
 )
 
+(defrule coches
+	(nuevo-cliente)
+	(not (coches-done))
+	?cliente <- (Cliente)
+	=>
+	(bind ?coches (pregunta-numerica "Tiene coche"))
+	(modify ?cliente (coches ?coches))
+	(assert (coches-done))
+)
+
 (defrule fin-preguntas
 	(nuevo-cliente)
 	=>
@@ -1351,6 +1369,7 @@
 	(not (RestriccionAmueblada))
 	(not (RestriccionBanos))
     (not (RestriccionBarrio))
+	(not (RestriccionGaraje))
 	=>
 	(assert (RestriccionPrecio))
 	(assert (RestriccionDormitorios))
@@ -1360,6 +1379,7 @@
 	(assert (RestriccionAmueblada))
 	(assert (RestriccionBanos))
     (assert (RestriccionBarrio))
+	(assert (RestriccionGaraje))
 )
 
 (defrule restriccion-precio
@@ -1478,6 +1498,16 @@
 	=>
 	(modify ?restriccion (banos ?banos) (margenEstrictoBanos ?estricto))
 	(assert (restriccion-banos-done))
+)
+
+(defrule restriccion-garaje
+	(nuevo-cliente)
+	(not (restriccion-garaje-done))
+	?cliente <- (Cliente (coches ?coches))
+	?restriccion <- (RestriccionGaraje)
+	=>
+	(modify ?restriccion (plazas ?coches))
+	(assert (restriccion-garaje-done))
 )
 
 (defrule fin-inferir-datos
@@ -1659,14 +1689,27 @@
 ; Criterios sobre el barrio
 
 (defrule criterio-clase
-        ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
-        ?vivienda <- (object (is-a ViviendaAlquiler) (barrioVivienda ?barrio))
-        (RestriccionBarrio (clases $?clases))
-        (test (and (eq ?vivienda ?viviendaR) (> (length$ ?clases) 0)))
-        =>
-        (if (member (send ?barrio get-clase) ?clases) then 
-                (slot-insert$ ?recomendacion criteriosCumplidos 1 (str-cat ?*crit-clase-barrio* " - " (implode$ ?clases)))
-        else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 (str-cat ?*crit-clase-barrio* " - " (implode$ ?clases))))
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (barrioVivienda ?barrio))
+	(RestriccionBarrio (clases $?clases))
+	(test (and (eq ?vivienda ?viviendaR) (> (length$ ?clases) 0)))
+	=>
+	(if (member (send ?barrio get-clase) ?clases) then 
+			(slot-insert$ ?recomendacion criteriosCumplidos 1 (str-cat ?*crit-clase-barrio* " - " (implode$ ?clases)))
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 (str-cat ?*crit-clase-barrio* " - " (implode$ ?clases))))
+)
+
+; Criterios sobre el garaje
+
+(defrule criterio-garaje
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (garaje ?garaje))
+	(RestriccionGaraje (plazas ?plazas))
+	(test (eq ?vivienda ?viviendaR))
+	=>
+	(if (>= ?garaje ?plazas) then
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-garaje*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-garaje*))
 )
 
 (defrule fin-filtrado
@@ -1700,7 +1743,7 @@
 	(loop-for-count (?i 1 (length$ ?criteriosCumplidos)) do
 		(bind ?criterio (nth$ ?i ?criteriosCumplidos))
 		(bind ?puntuacion (+ ?puntuacion 1))
-	) 
+	)
 
 	(loop-for-count (?i 1 (length$ ?criteriosNoCumplidos)) do
 		(bind ?criterio (nth$ ?i ?criteriosNoCumplidos))
