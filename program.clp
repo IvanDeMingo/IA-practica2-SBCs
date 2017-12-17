@@ -1803,13 +1803,139 @@
 )
 
 (defrule generacion-resultados
-	?recomendacion <- (object
-		(is-a Recomendacion)
-		(vivienda ?viviendaR)
-		(criteriosCumplidos ?criteriosCumplidos)
-		(criteriosNoCumplidos ?criteriosNoCumplidos)
-		(grado ?grado)
-	)
+	;; ?recomendacion <- (object
+	;; 	(is-a Recomendacion)
+	;; 	(vivienda ?viviendaR)
+	;; 	(criteriosCumplidos ?criteriosCumplidos)
+	;; 	(criteriosNoCumplidos ?criteriosNoCumplidos)
+	;; 	(grado ?grado)
+	;; )
+        ?cliente <- (Cliente
+                (tipoVivienda ?tipoVivienda)
+                (precioMax ?precioMax)
+                (margenEstrictoPrecioMax ?margenEstrictoPrecioMax)
+                (precioMin ?precioMin)
+                (numeroDormitorios ?numeroDormitorios)
+                (margenEstrictoDormitorios ?margenEstrictoDormitorios)
+                (numeroDormitoriosDobles ?numeroDormitoriosDobles)
+                (serviciosCercanos $?serviciosCercanos)
+                (prefiereTransPublico ?prefiereTransPublico)
+                (edadSolicitantes $?edadSolicitantes)
+                (tipologiaSolicitantes ?tipologiaSolicitantes)
+                (numHijos ?numHijos)
+                (numAncianos ?numAncianos)
+                (soleada ?soleada)
+                (amueblada ?amueblada)
+                (banos ?banos)
+                (margenEstrictoBanos ?margenEstrictoBanos)
+                (coches ?coches)
+        )
+	(not (generacion-resultados-done))
 	=>
-	(printout t "Recomendacion: " ?viviendaR ", Grado: " ?grado crlf)
+	(printout t crlf)
+	(printout t "=================================================" crlf)
+	(printout t "====                Resultados               ====" crlf)
+	(printout t "=================================================" crlf)
+	(printout t crlf)
+
+	;; Cliente
+	(printout t "DATOS DE ENTRADA" crlf)
+	(printout t "----------------" crlf)
+	(printout t crlf)
+	(printout t "Tipo de vivienda: " ?tipoVivienda crlf)
+	(printout t "Precio máximo: " ?precioMax)
+	(if (eq ?margenEstrictoPrecioMax FALSE) then
+		(printout t " (estricto)")
+	)
+	(printout t crlf)
+	(printout t "Precio mínimo: " ?precioMin crlf)
+	(printout t "Número de dormitorios: " ?numeroDormitorios)
+	(if (eq ?margenEstrictoDormitorios FALSE) then
+		(printout t " (estricto)")
+	)
+	(if (> ?numeroDormitoriosDobles -1) then
+		(printout t " (" ?numeroDormitoriosDobles " dobles)")
+	)
+	(printout t crlf)
+	(printout t "Servicios cercanos:")
+	(loop-for-count (?i 1 (length$ ?serviciosCercanos)) do
+		(bind ?servicio (nth$ ?i ?serviciosCercanos))
+		(printout t " " ?servicio)
+	)
+	(printout t crlf)
+	(printout t "Prefiere transporte público: " ?prefiereTransPublico crlf)
+	(printout t crlf)
+        (printout t "Edad solicitantes:")
+        (loop-for-count (?i 1 (length$ ?edadSolicitantes)) do
+                (bind ?edad (nth$ ?i ?edadSolicitantes))
+                (printout t " " ?edad)
+        )
+        (printout t crlf)
+        (printout t "Tipologia de los solicitantes: " ?tipologiaSolicitantes crlf)
+        (printout t "Número de hijos: " ?numHijos crlf)
+        (printout t "Número de ancianos: " ?numAncianos crlf)
+        (printout t "Preferencias sobre el sol: " ?soleada crlf)
+        (printout t "Amueblada: " ?amueblada crlf)
+        (printout t "Número de baños: " ?banos)
+        (if (eq ?margenEstrictoBanos TRUE) then
+                (printout t " (estricto)")
+        )
+        (printout t crlf)
+        (printout t "Número de coches: " ?coches crlf)
+        (printout t crlf)
+        (printout t crlf)
+
+	;; Recomendaciones
+
+        (bind $?noRecomendable (create$))
+        (bind $?parcialmenteAdecuado (create$))
+        (bind $?adecuado (create$))
+        (bind $?muyRecomendable (create$))
+	(bind $?recomendaciones (find-all-instances ((?inst Recomendacion)) TRUE))
+	(loop-for-count (?i 1 (length$ ?recomendaciones)) do
+                (bind ?recomendacion (nth$ ?i ?recomendaciones))
+                (bind ?vivienda (send ?recomendacion get-vivienda))
+                (if (eq (length$ (send ?recomendacion get-criteriosNoCumplidos)) 0) then
+                        (bind ?adecuado (insert$ ?adecuado 1 ?recomendacion))
+                else
+                        (if (> (length$ (send ?recomendacion get-criteriosCumplidos)) 2) then
+                                (bind ?parcialmenteAdecuado (insert$ ?parcialmenteAdecuado 1 ?recomendacion))
+                        else
+                                (bind ?noRecomendable (insert$ ?noRecomendable 1 ?recomendacion))
+                        )
+                )
+	)
+
+        (printout t "RECOMENDACIONES" crlf)
+        (printout t "---------------" crlf)
+        (printout t crlf)
+
+        ;; Adecuado
+        (printout t "Adecuadas:" crlf)
+        (loop-for-count (?i 1 (length$ ?adecuado)) do
+                (bind ?recomendacion (nth$ ?i ?adecuado))
+                (bind ?vivienda (send ?recomendacion get-vivienda))
+                (printout t "    Recomendacion: " ?recomendacion ", Vivienda: " ?vivienda crlf)
+        )
+
+        ;; Parcialmente Adecuado
+        (printout t "Parcialmente adecuadas:" crlf)
+        (loop-for-count (?i 1 (length$ ?parcialmenteAdecuado)) do
+                (bind ?recomendacion (nth$ ?i ?parcialmenteAdecuado))
+                (bind ?vivienda (send ?recomendacion get-vivienda))
+                (printout t "    Recomendacion: " ?recomendacion ", Vivienda: " ?vivienda crlf)
+        )
+
+        ;; No Recomendable
+        (printout t "No recomendables:" crlf)
+        (loop-for-count (?i 1 (length$ ?noRecomendable)) do
+                (bind ?recomendacion (nth$ ?i ?noRecomendable))
+                (bind ?vivienda (send ?recomendacion get-vivienda))
+                (printout t "    Recomendacion: " ?recomendacion ", Vivienda: " ?vivienda crlf)
+        )
+
+        (printout t crlf)
+        (printout t crlf)
+
+	(assert (generacion-resultados-done))
 )
