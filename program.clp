@@ -911,6 +911,9 @@
 		(allowed-values TRUE FALSE INDEF)
 		(default INDEF)
 	)
+
+	(slot banos (type INTEGER) (default -1))
+	(slot margenEstrictoBanos (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
 )
 
 ;;;--------------------------------------------------------------------------;;;
@@ -972,8 +975,13 @@
 	(slot amueblada (type SYMBOL) (allowed-values TRUE FALSE INDEF) (default INDEF))
 )
 
+(deftemplate RestriccionBanos
+	(slot banos (type INTEGER))
+	(slot margenEstrictoBanos (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
+)
+
 (deftemplate RestriccionBarrio
-        (multislot clases (type SYMBOL) (allowed-values ALTA MEDIA BAJA))
+	(multislot clases (type SYMBOL) (allowed-values ALTA MEDIA BAJA))
 )
 
 ;;;--------------------------------------------------------------------------;;;
@@ -993,6 +1001,8 @@
 (defglobal ?*crit-soleada* = "Soleada")
 
 (defglobal ?*crit-amueblada* = "Amueblada")
+
+(defglobal ?*crit-banos* = "Baños")
 
 (defglobal ?*crit-serv-cerc* = "Servicio cercano")
 
@@ -1325,6 +1335,19 @@
 	(assert (vivienda-amueblada-done))
 )
 
+(defrule banos
+	(nuevo-cliente)
+	(not (banos-done))
+	?cliente <- (Cliente)
+	=>
+	(bind ?banos (pregunta-numerica "Número de baños ((-1) si es indiferente)"))
+	(if (> ?banos -1) then
+		(bind ?estricto (si-o-no-p "Margen estricto"))
+		(modify ?cliente (banos ?banos) (margenEstrictoBanos ?estricto))
+	)
+	(assert (banos-done))
+)
+
 (defrule fin-preguntas
 	(nuevo-cliente)
 	=>
@@ -1348,19 +1371,21 @@
 	(not (RestriccionPrecio))
 	(not (RestriccionDormitorios))
 	(not (RestriccionServiciosCercanos))
-        (not (PreferenciaServiciosCercanos))
+    (not (PreferenciaServiciosCercanos))
 	(not (RestriccionSoleada))
 	(not (RestriccionAmueblada))
-        (not (RestriccionBarrio))
+	(not (RestriccionBanos))
+    (not (RestriccionBarrio))
 	=>
         (assert (RestriccionTipoVivienda))
 	(assert (RestriccionPrecio))
 	(assert (RestriccionDormitorios))
 	(assert (RestriccionServiciosCercanos))
-        (assert (PreferenciaServiciosCercanos))
+    (assert (PreferenciaServiciosCercanos))
 	(assert (RestriccionSoleada))
 	(assert (RestriccionAmueblada))
-        (assert (RestriccionBarrio))
+	(assert (RestriccionBanos))
+    (assert (RestriccionBarrio))
 )
 
 (defrule restriccion-tipo-vivienda
@@ -1479,6 +1504,16 @@
 	=>
 	(modify ?restriccion (amueblada ?a))
 	(assert (restriccion-amueblada-done))
+)
+
+(defrule restriccion-banos
+	(nuevo-cliente)
+	(not (restriccion-banos-done))
+	?cliente <- (Cliente (banos ?banos) (margenEstrictoBanos ?estricto))
+	?restriccion <- (RestriccionBanos)
+	=>
+	(modify ?restriccion (banos ?banos) (margenEstrictoBanos ?estricto))
+	(assert (restriccion-banos-done))
 )
 
 (defrule fin-inferir-datos
@@ -1646,6 +1681,30 @@
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-amueblada*))
 )
 
+; Criterio sobre el numero de banos
+
+(defrule criterio-banos-estricto
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (banos ?banos))
+	(RestriccionBanos (banos ?ban) (margenEstrictoBanos ?estricto))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?ban -1) (eq ?estricto TRUE)))
+	=>
+	(if (eq ?banos ?ban) then
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-banos*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-banos*))
+)
+
+(defrule criterio-banos-no-estricto
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (banos ?banos))
+	(RestriccionBanos (banos ?ban) (margenEstrictoBanos ?estricto))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?ban -1) (eq ?estricto FALSE)))
+	=>
+	(if (>= ?banos ?ban) then
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-banos*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-banos*))
+)
+
 ; Criterios sobre el barrio
 
 (defrule criterio-clase
@@ -1678,7 +1737,6 @@
 
 (defrule generacion-puntuacion
 	(nuevo-cliente)
-	(not (generacion-puntuacion-done))
 	?recomendacion <- (object
 		(is-a Recomendacion)
 		(vivienda ?viviendaR)
@@ -1699,11 +1757,9 @@
 	)
 
 	(send ?recomendacion put-grado ?puntuacion)
-	(assert (generacion-puntuacion-done))
 )
 
 (defrule generacion-resultados
-	(generacion-puntuacion-done)
 	?recomendacion <- (object
 		(is-a Recomendacion)
 		(vivienda ?viviendaR)
