@@ -888,11 +888,15 @@
 	(slot prefiereTransPublico (type SYMBOL) (allowed-values FALSE TRUE INDEF) (default INDEF))
 
 	(multislot edadSolicitantes (type INTEGER))
+
 	(slot tipologiaSolicitantes 
 		(type SYMBOL)
 		(allowed-values PAREJA-SIN-HIJOS PAREJA-HIJOS-FUTURO FAMILIA ESTUDIANTES INDIVIDUO INDEF)
 		(default INDEF)
 	)
+
+        (slot numHijos (type INTEGER) (default -1)) ; Solo se usa si la tipología de los solicitantes es FAMILIA
+        (slot numAncianos (type INTEGER) (default -1)) ; Solo se usa si la tipología de los solicitantes es FAMILIA
 
 	(slot soleada
 		(type SYMBOL)
@@ -968,6 +972,10 @@
 	(slot banos (type FLOAT))
 )
 
+(deftemplate RestriccionBarrio
+	(multislot clases (type SYMBOL) (allowed-values ALTA MEDIA BAJA))
+)
+
 ;;;--------------------------------------------------------------------------;;;
 ;;;-------------------------- VARIABLES GLOBALES ----------------------------;;;
 ;;;--------------------------------------------------------------------------;;;
@@ -987,6 +995,8 @@
 (defglobal ?*crit-banos* = "Baños")
 
 (defglobal ?*crit-serv-cerc* = "Servicio cercano")
+
+(defglobal ?*crit-clase-barrio* = "Clase barrio")
 
 ; Distancias
 
@@ -1210,6 +1220,11 @@
 	(printout t "0 - Colegio" crlf)
 	(printout t "1 - Hospital" crlf)
 	(printout t "2 - Zona de ocio" crlf)
+        (printout t "3 - Transporte público" crlf)
+        (printout t "4 - Zona comercial" crlf)
+        (printout t "5 - Supermercado" crlf)
+        (printout t "6 - Centro de salud" crlf)
+        (printout t "7 - Zona verde" crlf)
 	(bind $?servicios (pregunta-lista "Escribe los identificadores separados por espacios: "))
 	(bind $?lista (create$))
 	(progn$ (?s ?servicios)
@@ -1217,6 +1232,11 @@
 			(case 0 then (bind ?lista (insert$ ?lista 1 COLEGIO)))
 			(case 1 then (bind ?lista (insert$ ?lista 1 HOSPITAL)))
 			(case 2 then (bind ?lista (insert$ ?lista 1 ZONA-OCIO)))
+                        (case 3 then (bind ?lista (insert$ ?lista 1 TRANSPORTE-PUBLICO)))
+                        (case 4 then (bind ?lista (insert$ ?lista 1 ZONA-COMERCIAL)))
+                        (case 5 then (bind ?lista (insert$ ?lista 1 SUPERMERCADO)))
+                        (case 6 then (bind ?lista (insert$ ?lista 1 CENTRO-DE-SALUD)))
+                        (case 7 then (bind ?lista (insert$ ?lista 1 ZONA-VERDE)))
 		)
 	)
 	(modify ?cliente (serviciosCercanos ?lista))
@@ -1248,7 +1268,11 @@
 	(switch ?tipologia
 		(case 0 then (modify ?cliente (tipologiaSolicitantes PAREJA-SIN-HIJOS)))
 		(case 1 then (modify ?cliente (tipologiaSolicitantes PAREJA-HIJOS-FUTURO)))
-		(case 2 then (modify ?cliente (tipologiaSolicitantes FAMILIA)))
+		(case 2 then 
+                        (bind ?hijos (pregunta-numerica "Número de hijos ((-1) si no desea responder)"))
+                        (bind ?ancianos (pregunta-numerica "Número de ancianos ((-1) si no desea responder)"))
+                        (modify ?cliente (tipologiaSolicitantes FAMILIA) (numHijos ?hijos) (numAncianos ?ancianos))
+                )
 		(case 3 then (modify ?cliente (tipologiaSolicitantes ESTUDIANTES)))
 		(case 4 then (modify ?cliente (tipologiaSolicitantes INDIVIDUO)))
 	)
@@ -1321,6 +1345,7 @@
 	(not (RestriccionSoleada))
 	(not (RestriccionAmueblada))
 	(not (RestriccionBanos))
+    (not (RestriccionBarrio))
 	=>
 	(assert (RestriccionPrecio))
 	(assert (RestriccionDormitorios))
@@ -1329,6 +1354,7 @@
 	(assert (RestriccionSoleada))
 	(assert (RestriccionAmueblada))
 	(assert (RestriccionBanos))
+    (assert (RestriccionBarrio))
 )
 
 (defrule restriccion-precio
@@ -1383,18 +1409,40 @@
 (defrule preferencia-servicios-cercanos-tipologia-solicitantes
         (nuevo-cliente)
         (not (preferencia-servicios-cercanos-tipologia-solicitantes-done))
-        ?cliente <- (Cliente (tipologiaSolicitantes ?ts))
+        ?cliente <- (Cliente (tipologiaSolicitantes ?ts) (numHijos ?hijos) (numAncianos ?ancianos))
         ?preferencia <- (PreferenciaServiciosCercanos (serviciosCercanos $?sc))
         (test (neq ?ts INDEF))
         =>
         (switch ?ts
                 (case PAREJA-SIN-HIJOS then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 ZONA-OCIO))))
                 (case PAREJA-HIJOS-FUTURO then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 COLEGIO))))
-                ;(case FAMILIA then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 COLEGIO))))
+                (case FAMILIA then
+                        (bind $?lista (create$))
+                        (if (> ?hijos 0) then (bind ?lista (insert$ ?lista 1 COLEGIO)))
+                        (if (> ?ancianos 0) then (bind ?lista (insert$ ?lista 1 CENTRO-DE-SALUD)))
+                        (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 ?lista)))
+                )
                 (case ESTUDIANTES then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 ZONA-OCIO))))
                 ;(case INDIVIDUO then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 ZONA-OCIO))))
         )
         (assert (preferencia-servicios-cercanos-tipologia-solicitantes-done))
+)
+
+(defrule restriccion-clase-barrio-tipologia-solicitantes
+        (nuevo-cliente)
+        (not (restriccion-clase-barrio-tipologia-solicitantes-done))
+        ?cliente <- (Cliente (tipologiaSolicitantes ?ts))
+        ?restriccion <- (RestriccionBarrio (clases $?clases))
+        (test (neq ?ts INDEF))
+        =>
+        (switch ?ts
+                ;(case PAREJA-SIN-HIJOS then ())
+                (case PAREJA-HIJOS-FUTURO then (modify ?restriccion (clases (insert$ ?clases 1 (create$ MEDIA ALTA)))))
+                (case FAMILIA then (modify ?restriccion (clases (insert$ ?clases 1 (create$ MEDIA ALTA)))))
+                (case ESTUDIANTES then (modify ?restriccion (clases (insert$ ?clases 1 (create$ MEDIA BAJA)))))
+                ;(case INDIVIDUO then ())
+        )
+        (assert (restriccion-clase-barrio-tipologia-solicitantes-done))
 )
 
 (defrule restriccion-soleada
@@ -1591,6 +1639,19 @@
 	(if (eq ?banos ?ban) then
 		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-banos*)
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-banos*))
+)
+
+; Criterios sobre el barrio
+
+(defrule criterio-clase
+        ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+        ?vivienda <- (object (is-a ViviendaAlquiler) (barrioVivienda ?barrio))
+        (RestriccionBarrio (clases $?clases))
+        (test (and (eq ?vivienda ?viviendaR) (> (length$ ?clases) 0)))
+        =>
+        (if (member (send ?barrio get-clase) ?clases) then 
+                (slot-insert$ ?recomendacion criteriosCumplidos 1 (str-cat ?*crit-clase-barrio* " - " (implode$ ?clases)))
+        else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 (str-cat ?*crit-clase-barrio* " - " (implode$ ?clases))))
 )
 
 (defrule fin-filtrado
