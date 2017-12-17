@@ -1,17 +1,184 @@
-; Fri Dec 08 16:36:58 CET 2017
+; Sat Dec 16 20:07:13 CET 2017
 ; 
 ;+ (version "3.4.8")
 ;+ (build "Build 629")
 
+([ontologia_Class0] of  Servicio
+
+	(tipoServicio TRANSPORTE-PUBLICO)
+	(ubicacionServicio [ontologia_Class1]))
+
+([ontologia_Class1] of  Ubicacion
+
+	(coordX 2.0)
+	(coordY 11.0))
+
+([ontologia_Class10] of  Servicio
+
+	(tipoServicio ZONA-COMERCIAL)
+	(ubicacionServicio [ontologia_Class11]))
+
+([ontologia_Class10015] of  Ubicacion
+
+	(coordX 15.0)
+	(coordY 13.0))
+
+([ontologia_Class10016] of  Servicio
+
+	(tipoServicio CENTRO-DE-SALUD)
+	(ubicacionServicio [ontologia_Class10017]))
+
+([ontologia_Class10017] of  Ubicacion
+
+	(coordX 34.0)
+	(coordY 89.0))
+
+([ontologia_Class10018] of  Servicio
+
+	(tipoServicio CENTRO-DE-SALUD)
+	(ubicacionServicio [ontologia_Class10019]))
+
+([ontologia_Class10019] of  Ubicacion
+
+	(coordX 78.0)
+	(coordY 9.0))
+
+([ontologia_Class10020] of  Servicio
+
+	(tipoServicio ZONA-VERDE)
+	(ubicacionServicio [ontologia_Class10021]))
+
+([ontologia_Class10021] of  Ubicacion
+
+	(coordX 50.0)
+	(coordY 67.0))
+
+([ontologia_Class10022] of  Ubicacion
+
+	(coordX 12.0)
+	(coordY 9.0))
+
+([ontologia_Class10023] of  Barrio
+
+	(clase ALTA)
+	(situacion MONTANA)
+	(ubicacionBarrio [ontologia_Class10025]))
+
+([ontologia_Class10024] of  Ubicacion
+
+	(coordX 16.0)
+	(coordY 63.0))
+
+([ontologia_Class10025] of  Ubicacion
+
+	(coordX 17.0)
+	(coordY 80.0))
+
+([ontologia_Class10026] of  Barrio
+
+	(clase ALTA)
+	(situacion CENTRO-HISTORICO)
+	(ubicacionBarrio [ontologia_Class10027]))
+
+([ontologia_Class10027] of  Ubicacion
+
+	(coordX 50.0)
+	(coordY 71.0))
+
+([ontologia_Class10028] of  Barrio
+
+	(clase MEDIA)
+	(situacion BARRIO-MODERNO)
+	(ubicacionBarrio [ontologia_Class10029]))
+
+([ontologia_Class10029] of  Ubicacion
+
+	(coordX 16.0)
+	(coordY 63.0))
+
+([ontologia_Class11] of  Ubicacion
+
+	(coordX 60.0)
+	(coordY 12.0))
+
+([ontologia_Class12] of  Servicio
+
+	(tipoServicio SUPERMERCADO)
+	(ubicacionServicio [ontologia_Class13]))
+
+([ontologia_Class13] of  Ubicacion
+
+	(coordX 33.0)
+	(coordY 87.0))
+
+([ontologia_Class14] of  Servicio
+
+	(tipoServicio SUPERMERCADO)
+	(ubicacionServicio [ontologia_Class10015]))
+
+([ontologia_Class15] of  Barrio
+
+	(clase BAJA)
+	(situacion PERIFERIA)
+	(ubicacionBarrio [ontologia_Class16]))
+
+([ontologia_Class16] of  Ubicacion
+
+	(coordX 91.0)
+	(coordY 95.0))
+
+([ontologia_Class17] of  Barrio
+
+	(clase BAJA)
+	(situacion PLAYA)
+	(ubicacionBarrio [ontologia_Class18]))
+
+([ontologia_Class18] of  Ubicacion
+
+	(coordX 90.0)
+	(coordY 30.0))
+
+([ontologia_Class19] of  Barrio
+
+	(clase BAJA)
+	(situacion PERIFERIA)
+	(ubicacionBarrio [ontologia_Class20]))
+
+([ontologia_Class2] of  Servicio
+
+	(tipoServicio TRANSPORTE-PUBLICO)
+	(ubicacionServicio [ontologia_Class3]))
+
+([ontologia_Class20] of  Ubicacion
+
+	(coordX 50.0)
+	(coordY 37.0))
+
+([ontologia_Class21] of  Barrio
+
+	(clase MEDIA)
+	(situacion CENTRO-HISTORICO)
+	(ubicacionBarrio [ontologia_Class10022]))
+
 ([ontologia_Class22] of  ViviendaAlquiler
 
+	(aireAcondicionado TRUE)
 	(amueblada TRUE)
+	(balcon TRUE)
+	(banos 1)
+	(calefaccion TRUE)
+	(conElectrodomesticos TRUE)
 	(dormitorios DOBLE INDIVIDUAL INDIVIDUAL)
+	(garaje 0)
+	(mascotasProhibidas FALSE)
+	(piscina FALSE)
 	(precioMensual 850.0)
 	(soleada MANANA)
 	(superficie 75.0)
+	(terraza FALSE)
 	(tipoVivienda PISO)
-	(ubicacionVivienda [ontologia_Class24]))
+	(ubicacionVivienda [ontologia_Class24])
+	(vistas FALSE))
 
 ([ontologia_Class24] of  Ubicacion
 
@@ -20,13 +187,23 @@
 
 ([ontologia_Class25] of  ViviendaAlquiler
 
+	(aireAcondicionado TRUE)
 	(amueblada FALSE)
+	(balcon FALSE)
+	(banos 2)
+	(calefaccion TRUE)
+	(conElectrodomesticos FALSE)
 	(dormitorios INDIVIDUAL DOBLE DOBLE)
+	(garaje 1)
+	(mascotasProhibidas TRUE)
+	(piscina FALSE)
 	(precioMensual 810.0)
 	(soleada TODO-EL-DIA)
 	(superficie 83.0)
+	(terraza TRUE)
 	(tipoVivienda UNIFAMILIAR)
-	(ubicacionVivienda [ontologia_Class26]))
+	(ubicacionVivienda [ontologia_Class26])
+	(vistas TRUE))
 
 ([ontologia_Class26] of  Ubicacion
 
@@ -35,13 +212,28 @@
 
 ([ontologia_Class27] of  ViviendaAlquiler
 
+	(aireAcondicionado FALSE)
 	(amueblada TRUE)
+	(balcon FALSE)
+	(banos 1)
+	(calefaccion FALSE)
+	(conElectrodomesticos FALSE)
 	(dormitorios DOBLE)
+	(garaje 0)
+	(mascotasProhibidas FALSE)
+	(piscina FALSE)
 	(precioMensual 330.0)
 	(soleada NO)
 	(superficie 55.0)
+	(terraza FALSE)
 	(tipoVivienda PISO)
-	(ubicacionVivienda [ontologia_Class30]))
+	(ubicacionVivienda [ontologia_Class30])
+	(vistas FALSE))
+
+([ontologia_Class3] of  Ubicacion
+
+	(coordX 10.0)
+	(coordY 25.0))
 
 ([ontologia_Class30] of  Ubicacion
 
@@ -50,13 +242,23 @@
 
 ([ontologia_Class31] of  ViviendaAlquiler
 
+	(aireAcondicionado TRUE)
 	(amueblada FALSE)
+	(balcon FALSE)
+	(banos 1)
+	(calefaccion FALSE)
+	(conElectrodomesticos FALSE)
 	(dormitorios INDIVIDUAL DOBLE)
+	(garaje 0)
+	(mascotasProhibidas FALSE)
+	(piscina FALSE)
 	(precioMensual 550.0)
 	(soleada MANANA)
 	(superficie 61.0)
+	(terraza FALSE)
 	(tipoVivienda PISO)
-	(ubicacionVivienda [ontologia_Class32]))
+	(ubicacionVivienda [ontologia_Class32])
+	(vistas FALSE))
 
 ([ontologia_Class32] of  Ubicacion
 
@@ -65,13 +267,23 @@
 
 ([ontologia_Class33] of  ViviendaAlquiler
 
+	(aireAcondicionado TRUE)
 	(amueblada FALSE)
+	(balcon FALSE)
+	(banos 1)
+	(calefaccion FALSE)
+	(conElectrodomesticos FALSE)
 	(dormitorios DOBLE INDIVIDUAL)
+	(garaje 0)
+	(mascotasProhibidas FALSE)
+	(piscina FALSE)
 	(precioMensual 415.0)
 	(soleada TODO-EL-DIA)
 	(superficie 75.0)
+	(terraza FALSE)
 	(tipoVivienda PISO)
-	(ubicacionVivienda [ontologia_Class34]))
+	(ubicacionVivienda [ontologia_Class34])
+	(vistas FALSE))
 
 ([ontologia_Class34] of  Ubicacion
 
@@ -80,13 +292,23 @@
 
 ([ontologia_Class35] of  ViviendaAlquiler
 
+	(aireAcondicionado TRUE)
 	(amueblada TRUE)
+	(balcon FALSE)
+	(banos 3)
+	(calefaccion TRUE)
+	(conElectrodomesticos TRUE)
 	(dormitorios DOBLE DOBLE INDIVIDUAL INDIVIDUAL)
+	(garaje 2)
+	(mascotasProhibidas TRUE)
+	(piscina TRUE)
 	(precioMensual 1450.0)
 	(soleada TODO-EL-DIA)
 	(superficie 130.0)
+	(terraza FALSE)
 	(tipoVivienda UNIFAMILIAR)
-	(ubicacionVivienda [ontologia_Class36]))
+	(ubicacionVivienda [ontologia_Class36])
+	(vistas FALSE))
 
 ([ontologia_Class36] of  Ubicacion
 
@@ -95,26 +317,53 @@
 
 ([ontologia_Class37] of  ViviendaAlquiler
 
+	(aireAcondicionado TRUE)
 	(amueblada TRUE)
+	(balcon TRUE)
+	(banos 3)
+	(calefaccion TRUE)
+	(conElectrodomesticos TRUE)
 	(dormitorios INDIVIDUAL DOBLE DOBLE)
+	(garaje 2)
+	(mascotasProhibidas FALSE)
+	(piscina FALSE)
 	(precioMensual 1600.0)
 	(soleada TARDE)
 	(superficie 120.0)
+	(terraza TRUE)
 	(tipoVivienda PISO)
-	(ubicacionVivienda [ontologia_Class38]))
+	(ubicacionVivienda [ontologia_Class38])
+	(vistas TRUE))
 
 ([ontologia_Class38] of  Ubicacion
-)
+
+	(coordX 55.0)
+	(coordY 70.0))
 
 ([ontologia_Class39] of  ViviendaAlquiler
 
+	(aireAcondicionado TRUE)
 	(amueblada TRUE)
+	(balcon FALSE)
+	(banos 2)
+	(calefaccion TRUE)
+	(conElectrodomesticos TRUE)
 	(dormitorios DOBLE INDIVIDUAL)
+	(garaje 1)
+	(mascotasProhibidas TRUE)
+	(piscina FALSE)
 	(precioMensual 900.0)
 	(soleada MANANA)
 	(superficie 65.0)
+	(terraza FALSE)
 	(tipoVivienda PISO)
-	(ubicacionVivienda [ontologia_Class40]))
+	(ubicacionVivienda [ontologia_Class40])
+	(vistas FALSE))
+
+([ontologia_Class4] of  Servicio
+
+	(tipoServicio TRANSPORTE-PUBLICO)
+	(ubicacionServicio [ontologia_Class5]))
 
 ([ontologia_Class40] of  Ubicacion
 
@@ -123,13 +372,23 @@
 
 ([ontologia_Class41] of  ViviendaAlquiler
 
+	(aireAcondicionado FALSE)
 	(amueblada TRUE)
+	(balcon TRUE)
+	(banos 1)
+	(calefaccion FALSE)
+	(conElectrodomesticos FALSE)
 	(dormitorios DOBLE)
+	(garaje 0)
+	(mascotasProhibidas FALSE)
+	(piscina FALSE)
 	(precioMensual 660.0)
 	(soleada TODO-EL-DIA)
 	(superficie 60.0)
+	(terraza FALSE)
 	(tipoVivienda PISO)
-	(ubicacionVivienda [ontologia_Class42]))
+	(ubicacionVivienda [ontologia_Class42])
+	(vistas FALSE))
 
 ([ontologia_Class42] of  Ubicacion
 
@@ -138,13 +397,23 @@
 
 ([ontologia_Class43] of  ViviendaAlquiler
 
+	(aireAcondicionado FALSE)
 	(amueblada FALSE)
+	(balcon FALSE)
+	(banos 1)
+	(calefaccion TRUE)
+	(conElectrodomesticos FALSE)
 	(dormitorios DOBLE INDIVIDUAL INDIVIDUAL)
+	(garaje 0)
+	(mascotasProhibidas FALSE)
+	(piscina FALSE)
 	(precioMensual 620.0)
 	(soleada MANANA)
 	(superficie 72.0)
+	(terraza FALSE)
 	(tipoVivienda UNIFAMILIAR)
-	(ubicacionVivienda [ontologia_Class44]))
+	(ubicacionVivienda [ontologia_Class44])
+	(vistas TRUE))
 
 ([ontologia_Class44] of  Ubicacion
 
@@ -153,13 +422,23 @@
 
 ([ontologia_Class45] of  ViviendaAlquiler
 
+	(aireAcondicionado TRUE)
 	(amueblada TRUE)
+	(balcon FALSE)
+	(banos 2)
+	(calefaccion FALSE)
+	(conElectrodomesticos TRUE)
 	(dormitorios INDIVIDUAL INDIVIDUAL INDIVIDUAL INDIVIDUAL)
+	(garaje 0)
+	(mascotasProhibidas FALSE)
+	(piscina FALSE)
 	(precioMensual 1000.0)
 	(soleada MANANA)
 	(superficie 90.0)
+	(terraza FALSE)
 	(tipoVivienda PISO)
-	(ubicacionVivienda [ontologia_Class46]))
+	(ubicacionVivienda [ontologia_Class46])
+	(vistas FALSE))
 
 ([ontologia_Class46] of  Ubicacion
 
@@ -168,13 +447,23 @@
 
 ([ontologia_Class47] of  ViviendaAlquiler
 
+	(aireAcondicionado TRUE)
 	(amueblada TRUE)
+	(balcon FALSE)
+	(banos 1)
+	(calefaccion FALSE)
+	(conElectrodomesticos TRUE)
 	(dormitorios INDIVIDUAL INDIVIDUAL INDIVIDUAL)
+	(garaje 0)
+	(mascotasProhibidas FALSE)
+	(piscina FALSE)
 	(precioMensual 750.0)
 	(soleada TARDE)
 	(superficie 81.0)
+	(terraza FALSE)
 	(tipoVivienda PISO)
-	(ubicacionVivienda [ontologia_Class48]))
+	(ubicacionVivienda [ontologia_Class48])
+	(vistas FALSE))
 
 ([ontologia_Class48] of  Ubicacion
 
@@ -185,6 +474,11 @@
 
 	(tipoServicio COLEGIO)
 	(ubicacionServicio [ontologia_Class50]))
+
+([ontologia_Class5] of  Ubicacion
+
+	(coordX 70.0)
+	(coordY 17.0))
 
 ([ontologia_Class50] of  Ubicacion
 
@@ -230,3 +524,23 @@
 
 	(coordX 60.0)
 	(coordY 90.0))
+
+([ontologia_Class6] of  Servicio
+
+	(tipoServicio TRANSPORTE-PUBLICO)
+	(ubicacionServicio [ontologia_Class7]))
+
+([ontologia_Class7] of  Ubicacion
+
+	(coordX 45.0)
+	(coordY 67.0))
+
+([ontologia_Class8] of  Servicio
+
+	(tipoServicio ZONA-COMERCIAL)
+	(ubicacionServicio [ontologia_Class9]))
+
+([ontologia_Class9] of  Ubicacion
+
+	(coordX 15.0)
+	(coordY 70.0))

@@ -3,401 +3,861 @@
 ;;;--------------------------------------------------------------------------;;;
 
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
-	(is-a USER)
-	(role abstract)
-	(single-slot tipoVivienda
-		(type SYMBOL)
-		(allowed-values PISO UNIFAMILIAR)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot ubicacionServicio
-		(type INSTANCE)
-;+		(allowed-classes Ubicacion)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(multislot criteriosCumplidos
-		(type STRING)
-		(create-accessor read-write))
-	(single-slot soleada
-		(type SYMBOL)
-		(allowed-values MANANA TARDE TODO-EL-DIA NO)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(multislot criteriosNoCumplidos
-		(type STRING)
-		(create-accessor read-write))
-	(single-slot vivienda
-		(type INSTANCE)
-;+		(allowed-classes ViviendaAlquiler)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot precioMensual
-		(type FLOAT)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(multislot criteriosExtra
-		(type STRING)
-		(create-accessor read-write))
-	(multislot dormitorios
-		(type SYMBOL)
-		(allowed-values INDIVIDUAL DOBLE)
-		(cardinality 1 ?VARIABLE)
-		(create-accessor read-write))
-	(single-slot superficie
-		(type FLOAT)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot grado
-		(type INTEGER)
-		(default 0)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot coordX
-		(type FLOAT)
-		(range 0.0 100.0)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot coordY
-		(type FLOAT)
-		(range 0.0 100.0)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot amueblada
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot ubicacionVivienda
-		(type INSTANCE)
-;+		(allowed-classes Ubicacion)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot tipoServicio
-		(type SYMBOL)
-		(allowed-values COLEGIO HOSPITAL ZONA-OCIO)
-;+		(cardinality 1 1)
-		(create-accessor read-write)))
+        (is-a USER)
+        (role abstract)
+        (single-slot conElectrodomesticos
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot tipoVivienda
+                (type SYMBOL)
+                (allowed-values PISO UNIFAMILIAR)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot ubicacionServicio
+                (type INSTANCE)
+;+              (allowed-classes Ubicacion)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (multislot criteriosCumplidos
+                (type STRING)
+                (create-accessor read-write))
+        (single-slot calefaccion
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot soleada
+                (type SYMBOL)
+                (allowed-values MANANA TARDE TODO-EL-DIA NO)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (multislot criteriosNoCumplidos
+                (type STRING)
+                (create-accessor read-write))
+        (single-slot clase
+                (type SYMBOL)
+                (allowed-values ALTA MEDIA BAJA)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot piscina
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot ubicacionBarrio
+                (type INSTANCE)
+;+              (allowed-classes Ubicacion)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot KB_055321_Class20
+                (type STRING)
+;+              (cardinality 0 1)
+                (create-accessor read-write))
+        (single-slot vivienda
+                (type INSTANCE)
+;+              (allowed-classes ViviendaAlquiler)
+;+              (cardinality 0 1)
+                (create-accessor read-write))
+        (single-slot balcon
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot situacion
+                (type SYMBOL)
+                (allowed-values MONTANA PLAYA CENTRO-HISTORICO BARRIO-MODERNO PERIFERIA)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot precioMensual
+                (type FLOAT)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot terraza
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot barrioVivienda
+                (type INSTANCE)
+;+              (allowed-classes Barrio)
+;+              (cardinality 0 1)
+                (create-accessor read-write))
+        (multislot criteriosExtra
+                (type STRING)
+                (create-accessor read-write))
+        (single-slot mascotasProhibidas
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot banos
+                (type INTEGER)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (multislot dormitorios
+                (type SYMBOL)
+                (allowed-values INDIVIDUAL DOBLE)
+                (cardinality 1 ?VARIABLE)
+                (create-accessor read-write))
+        (single-slot superficie
+                (type FLOAT)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot garaje
+                (type INTEGER)
+                (default 0)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot aireAcondicionado
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot vistas
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot grado
+                (type INTEGER)
+                (default 0)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot coordX
+                (type FLOAT)
+                (range 0.0 100.0)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot coordY
+                (type FLOAT)
+                (range 0.0 100.0)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot amueblada
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot ubicacionVivienda
+                (type INSTANCE)
+;+              (allowed-classes Ubicacion)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot tipoServicio
+                (type SYMBOL)
+                (allowed-values COLEGIO HOSPITAL ZONA-OCIO TRANSPORTE-PUBLICO ZONA-COMERCIAL SUPERMERCADO CENTRO-DE-SALUD ZONA-VERDE)
+;+              (cardinality 1 1)
+                (create-accessor read-write)))
 
 (defclass Ubicacion
-	(is-a USER)
-	(role concrete)
-	(single-slot coordX
-		(type FLOAT)
-		(range 0.0 100.0)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot coordY
-		(type FLOAT)
-		(range 0.0 100.0)
-;+		(cardinality 1 1)
-		(create-accessor read-write)))
+        (is-a USER)
+        (role concrete)
+        (single-slot coordX
+                (type FLOAT)
+                (range 0.0 100.0)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot coordY
+                (type FLOAT)
+                (range 0.0 100.0)
+;+              (cardinality 1 1)
+                (create-accessor read-write)))
 
 (defclass ViviendaAlquiler
-	(is-a USER)
-	(role concrete)
-	(single-slot soleada
-		(type SYMBOL)
-		(allowed-values MANANA TARDE TODO-EL-DIA NO)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot precioMensual
-		(type FLOAT)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot amueblada
-		(type SYMBOL)
-		(allowed-values FALSE TRUE)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot tipoVivienda
-		(type SYMBOL)
-		(allowed-values PISO UNIFAMILIAR)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(multislot dormitorios
-		(type SYMBOL)
-		(allowed-values INDIVIDUAL DOBLE)
-		(cardinality 1 ?VARIABLE)
-		(create-accessor read-write))
-	(single-slot ubicacionVivienda
-		(type INSTANCE)
-;+		(allowed-classes Ubicacion)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot superficie
-		(type FLOAT)
-;+		(cardinality 1 1)
-		(create-accessor read-write)))
+        (is-a USER)
+        (role concrete)
+        (single-slot garaje
+                (type INTEGER)
+                (default 0)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot aireAcondicionado
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot conElectrodomesticos
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot soleada
+                (type SYMBOL)
+                (allowed-values MANANA TARDE TODO-EL-DIA NO)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot precioMensual
+                (type FLOAT)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot terraza
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot vistas
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot tipoVivienda
+                (type SYMBOL)
+                (allowed-values PISO UNIFAMILIAR)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot barrioVivienda
+                (type INSTANCE)
+;+              (allowed-classes Barrio)
+;+              (cardinality 0 1)
+                (create-accessor read-write))
+        (single-slot mascotasProhibidas
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot banos
+                (type INTEGER)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot piscina
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot amueblada
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (multislot dormitorios
+                (type SYMBOL)
+                (allowed-values INDIVIDUAL DOBLE)
+                (cardinality 1 ?VARIABLE)
+                (create-accessor read-write))
+        (single-slot balcon
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot ubicacionVivienda
+                (type INSTANCE)
+;+              (allowed-classes Ubicacion)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot calefaccion
+                (type SYMBOL)
+                (allowed-values FALSE TRUE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot superficie
+                (type FLOAT)
+;+              (cardinality 1 1)
+                (create-accessor read-write)))
 
 (defclass Servicio
-	(is-a USER)
-	(role concrete)
-	(single-slot tipoServicio
-		(type SYMBOL)
-		(allowed-values COLEGIO HOSPITAL ZONA-OCIO)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(single-slot ubicacionServicio
-		(type INSTANCE)
-;+		(allowed-classes Ubicacion)
-;+		(cardinality 1 1)
-		(create-accessor read-write)))
+        (is-a USER)
+        (role concrete)
+        (single-slot tipoServicio
+                (type SYMBOL)
+                (allowed-values COLEGIO HOSPITAL ZONA-OCIO TRANSPORTE-PUBLICO ZONA-COMERCIAL SUPERMERCADO CENTRO-DE-SALUD ZONA-VERDE)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot ubicacionServicio
+                (type INSTANCE)
+;+              (allowed-classes Ubicacion)
+;+              (cardinality 1 1)
+                (create-accessor read-write)))
 
 (defclass Recomendacion
-	(is-a USER)
-	(role concrete)
-	(multislot criteriosCumplidos
-		(type STRING)
-		(create-accessor read-write))
-	(multislot criteriosNoCumplidos
-		(type STRING)
-		(create-accessor read-write))
-	(single-slot vivienda
-		(type INSTANCE)
-;+		(allowed-classes ViviendaAlquiler)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot grado
-		(type INTEGER)
-		(default 0)
-;+		(cardinality 1 1)
-		(create-accessor read-write))
-	(multislot criteriosExtra
-		(type STRING)
-		(create-accessor read-write)))
+        (is-a USER)
+        (role concrete)
+        (multislot criteriosCumplidos
+                (type STRING)
+                (create-accessor read-write))
+        (multislot criteriosNoCumplidos
+                (type STRING)
+                (create-accessor read-write))
+        (single-slot vivienda
+                (type INSTANCE)
+;+              (allowed-classes ViviendaAlquiler)
+;+              (cardinality 0 1)
+                (create-accessor read-write))
+        (single-slot grado
+                (type INTEGER)
+                (default 0)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (multislot criteriosExtra
+                (type STRING)
+                (create-accessor read-write)))
+
+(defclass Barrio
+        (is-a USER)
+        (role concrete)
+        (single-slot situacion
+                (type SYMBOL)
+                (allowed-values MONTANA PLAYA CENTRO-HISTORICO BARRIO-MODERNO PERIFERIA)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot clase
+                (type SYMBOL)
+                (allowed-values ALTA MEDIA BAJA)
+;+              (cardinality 1 1)
+                (create-accessor read-write))
+        (single-slot ubicacionBarrio
+                (type INSTANCE)
+;+              (allowed-classes Ubicacion)
+;+              (cardinality 1 1)
+                (create-accessor read-write)))
 
 ;;;--------------------------------------------------------------------------;;;
 ;;;------------------------- ONTOLOGIA: INSTANCIAS --------------------------;;;
 ;;;--------------------------------------------------------------------------;;;
 
 (definstances instancias
-	([ontologia_Class22] of  ViviendaAlquiler
+        ([ontologia_Class0] of  Servicio
 
-		(amueblada TRUE)
-		(dormitorios DOBLE INDIVIDUAL INDIVIDUAL)
-		(precioMensual 850.0)
-		(soleada MANANA)
-		(superficie 75.0)
-		(tipoVivienda PISO)
-		(ubicacionVivienda [ontologia_Class24]))
+                (tipoServicio TRANSPORTE-PUBLICO)
+                (ubicacionServicio [ontologia_Class1]))
 
-	([ontologia_Class24] of  Ubicacion
+        ([ontologia_Class1] of  Ubicacion
 
-		(coordX 3.0)
-		(coordY 2.0))
+                (coordX 2.0)
+                (coordY 11.0))
 
-	([ontologia_Class25] of  ViviendaAlquiler
+        ([ontologia_Class10] of  Servicio
 
-		(amueblada FALSE)
-		(dormitorios INDIVIDUAL DOBLE DOBLE)
-		(precioMensual 810.0)
-		(soleada TODO-EL-DIA)
-		(superficie 83.0)
-		(tipoVivienda UNIFAMILIAR)
-		(ubicacionVivienda [ontologia_Class26]))
+                (tipoServicio ZONA-COMERCIAL)
+                (ubicacionServicio [ontologia_Class11]))
 
-	([ontologia_Class26] of  Ubicacion
+        ([ontologia_Class10015] of  Ubicacion
 
-		(coordX 10.0)
-		(coordY 68.0))
+                (coordX 15.0)
+                (coordY 13.0))
 
-	([ontologia_Class27] of  ViviendaAlquiler
+        ([ontologia_Class10016] of  Servicio
 
-		(amueblada TRUE)
-		(dormitorios DOBLE)
-		(precioMensual 330.0)
-		(soleada NO)
-		(superficie 55.0)
-		(tipoVivienda PISO)
-		(ubicacionVivienda [ontologia_Class30]))
+                (tipoServicio CENTRO-DE-SALUD)
+                (ubicacionServicio [ontologia_Class10017]))
 
-	([ontologia_Class30] of  Ubicacion
+        ([ontologia_Class10017] of  Ubicacion
 
-		(coordX 91.0)
-		(coordY 28.0))
+                (coordX 34.0)
+                (coordY 89.0))
 
-	([ontologia_Class31] of  ViviendaAlquiler
+        ([ontologia_Class10018] of  Servicio
 
-		(amueblada FALSE)
-		(dormitorios INDIVIDUAL DOBLE)
-		(precioMensual 550.0)
-		(soleada MANANA)
-		(superficie 61.0)
-		(tipoVivienda PISO)
-		(ubicacionVivienda [ontologia_Class32]))
+                (tipoServicio CENTRO-DE-SALUD)
+                (ubicacionServicio [ontologia_Class10019]))
 
-	([ontologia_Class32] of  Ubicacion
+        ([ontologia_Class10019] of  Ubicacion
 
-		(coordX 48.0)
-		(coordY 39.0))
+                (coordX 78.0)
+                (coordY 9.0))
 
-	([ontologia_Class33] of  ViviendaAlquiler
+        ([ontologia_Class10020] of  Servicio
 
-		(amueblada FALSE)
-		(dormitorios DOBLE INDIVIDUAL)
-		(precioMensual 415.0)
-		(soleada TODO-EL-DIA)
-		(superficie 75.0)
-		(tipoVivienda PISO)
-		(ubicacionVivienda [ontologia_Class34]))
+                (tipoServicio ZONA-VERDE)
+                (ubicacionServicio [ontologia_Class10021]))
 
-	([ontologia_Class34] of  Ubicacion
+        ([ontologia_Class10021] of  Ubicacion
 
-		(coordX 94.0)
-		(coordY 91.0))
+                (coordX 50.0)
+                (coordY 67.0))
 
-	([ontologia_Class35] of  ViviendaAlquiler
+        ([ontologia_Class10022] of  Ubicacion
 
-		(amueblada TRUE)
-		(dormitorios DOBLE DOBLE INDIVIDUAL INDIVIDUAL)
-		(precioMensual 1450.0)
-		(soleada TODO-EL-DIA)
-		(superficie 130.0)
-		(tipoVivienda UNIFAMILIAR)
-		(ubicacionVivienda [ontologia_Class36]))
+                (coordX 12.0)
+                (coordY 9.0))
 
-	([ontologia_Class36] of  Ubicacion
+        ([ontologia_Class10023] of  Barrio
 
-		(coordX 50.0)
-		(coordY 76.0))
+                (clase ALTA)
+                (situacion MONTANA)
+                (ubicacionBarrio [ontologia_Class10025]))
 
-	([ontologia_Class37] of  ViviendaAlquiler
+        ([ontologia_Class10024] of  Ubicacion
 
-		(amueblada TRUE)
-		(dormitorios INDIVIDUAL DOBLE DOBLE)
-		(precioMensual 1600.0)
-		(soleada TARDE)
-		(superficie 120.0)
-		(tipoVivienda PISO)
-		(ubicacionVivienda [ontologia_Class38]))
+                (coordX 16.0)
+                (coordY 63.0))
 
-	([ontologia_Class38] of  Ubicacion
-	)
+        ([ontologia_Class10025] of  Ubicacion
 
-	([ontologia_Class39] of  ViviendaAlquiler
+                (coordX 17.0)
+                (coordY 80.0))
 
-		(amueblada TRUE)
-		(dormitorios DOBLE INDIVIDUAL)
-		(precioMensual 900.0)
-		(soleada MANANA)
-		(superficie 65.0)
-		(tipoVivienda PISO)
-		(ubicacionVivienda [ontologia_Class40]))
+        ([ontologia_Class10026] of  Barrio
 
-	([ontologia_Class40] of  Ubicacion
+                (clase ALTA)
+                (situacion CENTRO-HISTORICO)
+                (ubicacionBarrio [ontologia_Class10027]))
 
-		(coordX 12.0)
-		(coordY 87.0))
+        ([ontologia_Class10027] of  Ubicacion
 
-	([ontologia_Class41] of  ViviendaAlquiler
+                (coordX 50.0)
+                (coordY 71.0))
 
-		(amueblada TRUE)
-		(dormitorios DOBLE)
-		(precioMensual 660.0)
-		(soleada TODO-EL-DIA)
-		(superficie 60.0)
-		(tipoVivienda PISO)
-		(ubicacionVivienda [ontologia_Class42]))
+        ([ontologia_Class10028] of  Barrio
 
-	([ontologia_Class42] of  Ubicacion
+                (clase MEDIA)
+                (situacion BARRIO-MODERNO)
+                (ubicacionBarrio [ontologia_Class10029]))
 
-		(coordX 20.0)
-		(coordY 15.0))
+        ([ontologia_Class10029] of  Ubicacion
 
-	([ontologia_Class43] of  ViviendaAlquiler
+                (coordX 16.0)
+                (coordY 63.0))
 
-		(amueblada FALSE)
-		(dormitorios DOBLE INDIVIDUAL INDIVIDUAL)
-		(precioMensual 620.0)
-		(soleada MANANA)
-		(superficie 72.0)
-		(tipoVivienda UNIFAMILIAR)
-		(ubicacionVivienda [ontologia_Class44]))
+        ([ontologia_Class11] of  Ubicacion
 
-	([ontologia_Class44] of  Ubicacion
+                (coordX 60.0)
+                (coordY 12.0))
 
-		(coordX 23.0)
-		(coordY 58.0))
+        ([ontologia_Class12] of  Servicio
 
-	([ontologia_Class45] of  ViviendaAlquiler
+                (tipoServicio SUPERMERCADO)
+                (ubicacionServicio [ontologia_Class13]))
 
-		(amueblada TRUE)
-		(dormitorios INDIVIDUAL INDIVIDUAL INDIVIDUAL INDIVIDUAL)
-		(precioMensual 1000.0)
-		(soleada MANANA)
-		(superficie 90.0)
-		(tipoVivienda PISO)
-		(ubicacionVivienda [ontologia_Class46]))
+        ([ontologia_Class13] of  Ubicacion
 
-	([ontologia_Class46] of  Ubicacion
+                (coordX 33.0)
+                (coordY 87.0))
 
-		(coordX 60.0)
-		(coordY 87.0))
+        ([ontologia_Class14] of  Servicio
 
-	([ontologia_Class47] of  ViviendaAlquiler
+                (tipoServicio SUPERMERCADO)
+                (ubicacionServicio [ontologia_Class10015]))
 
-		(amueblada TRUE)
-		(dormitorios INDIVIDUAL INDIVIDUAL INDIVIDUAL)
-		(precioMensual 750.0)
-		(soleada TARDE)
-		(superficie 81.0)
-		(tipoVivienda PISO)
-		(ubicacionVivienda [ontologia_Class48]))
+        ([ontologia_Class15] of  Barrio
 
-	([ontologia_Class48] of  Ubicacion
+                (clase BAJA)
+                (situacion PERIFERIA)
+                (ubicacionBarrio [ontologia_Class16]))
 
-		(coordX 44.0)
-		(coordY 10.0))
+        ([ontologia_Class16] of  Ubicacion
 
-	([ontologia_Class49] of  Servicio
+                (coordX 91.0)
+                (coordY 95.0))
+
+        ([ontologia_Class17] of  Barrio
+
+                (clase BAJA)
+                (situacion PLAYA)
+                (ubicacionBarrio [ontologia_Class18]))
+
+        ([ontologia_Class18] of  Ubicacion
+
+                (coordX 90.0)
+                (coordY 30.0))
 
-		(tipoServicio COLEGIO)
-		(ubicacionServicio [ontologia_Class50]))
+        ([ontologia_Class19] of  Barrio
 
-	([ontologia_Class50] of  Ubicacion
+                (clase BAJA)
+                (situacion PERIFERIA)
+                (ubicacionBarrio [ontologia_Class20]))
 
-		(coordX 65.0)
-		(coordY 28.0))
+        ([ontologia_Class2] of  Servicio
 
-	([ontologia_Class51] of  Servicio
-
-		(tipoServicio COLEGIO)
-		(ubicacionServicio [ontologia_Class52]))
-
-	([ontologia_Class52] of  Ubicacion
-
-		(coordX 30.0)
-		(coordY 85.0))
-
-	([ontologia_Class53] of  Servicio
-
-		(tipoServicio HOSPITAL)
-		(ubicacionServicio [ontologia_Class54]))
-
-	([ontologia_Class54] of  Ubicacion
-
-		(coordX 29.0)
-		(coordY 30.0))
-
-	([ontologia_Class55] of  Servicio
-
-		(tipoServicio ZONA-OCIO)
-		(ubicacionServicio [ontologia_Class56]))
-
-	([ontologia_Class56] of  Ubicacion
-
-		(coordX 75.0)
-		(coordY 33.0))
-
-	([ontologia_Class57] of  Servicio
-
-		(tipoServicio ZONA-OCIO)
-		(ubicacionServicio [ontologia_Class58]))
-
-	([ontologia_Class58] of  Ubicacion
-
-		(coordX 60.0)
-		(coordY 90.0))
+                (tipoServicio TRANSPORTE-PUBLICO)
+                (ubicacionServicio [ontologia_Class3]))
+
+        ([ontologia_Class20] of  Ubicacion
+
+                (coordX 50.0)
+                (coordY 37.0))
+
+        ([ontologia_Class21] of  Barrio
+
+                (clase MEDIA)
+                (situacion CENTRO-HISTORICO)
+                (ubicacionBarrio [ontologia_Class10022]))
+
+        ([ontologia_Class22] of  ViviendaAlquiler
+
+                (aireAcondicionado TRUE)
+                (amueblada TRUE)
+                (balcon TRUE)
+                (banos 1)
+                (calefaccion TRUE)
+                (conElectrodomesticos TRUE)
+                (dormitorios DOBLE INDIVIDUAL INDIVIDUAL)
+                (garaje 0)
+                (mascotasProhibidas FALSE)
+                (piscina FALSE)
+                (precioMensual 850.0)
+                (soleada MANANA)
+                (superficie 75.0)
+                (terraza FALSE)
+                (tipoVivienda PISO)
+                (ubicacionVivienda [ontologia_Class24])
+                (vistas FALSE))
+
+        ([ontologia_Class24] of  Ubicacion
+
+                (coordX 3.0)
+                (coordY 2.0))
+
+        ([ontologia_Class25] of  ViviendaAlquiler
+
+                (aireAcondicionado TRUE)
+                (amueblada FALSE)
+                (balcon FALSE)
+                (banos 2)
+                (calefaccion TRUE)
+                (conElectrodomesticos FALSE)
+                (dormitorios INDIVIDUAL DOBLE DOBLE)
+                (garaje 1)
+                (mascotasProhibidas TRUE)
+                (piscina FALSE)
+                (precioMensual 810.0)
+                (soleada TODO-EL-DIA)
+                (superficie 83.0)
+                (terraza TRUE)
+                (tipoVivienda UNIFAMILIAR)
+                (ubicacionVivienda [ontologia_Class26])
+                (vistas TRUE))
+
+        ([ontologia_Class26] of  Ubicacion
+
+                (coordX 10.0)
+                (coordY 68.0))
+
+        ([ontologia_Class27] of  ViviendaAlquiler
+
+                (aireAcondicionado FALSE)
+                (amueblada TRUE)
+                (balcon FALSE)
+                (banos 1)
+                (calefaccion FALSE)
+                (conElectrodomesticos FALSE)
+                (dormitorios DOBLE)
+                (garaje 0)
+                (mascotasProhibidas FALSE)
+                (piscina FALSE)
+                (precioMensual 330.0)
+                (soleada NO)
+                (superficie 55.0)
+                (terraza FALSE)
+                (tipoVivienda PISO)
+                (ubicacionVivienda [ontologia_Class30])
+                (vistas FALSE))
+
+        ([ontologia_Class3] of  Ubicacion
+
+                (coordX 10.0)
+                (coordY 25.0))
+
+        ([ontologia_Class30] of  Ubicacion
+
+                (coordX 91.0)
+                (coordY 28.0))
+
+        ([ontologia_Class31] of  ViviendaAlquiler
+
+                (aireAcondicionado TRUE)
+                (amueblada FALSE)
+                (balcon FALSE)
+                (banos 1)
+                (calefaccion FALSE)
+                (conElectrodomesticos FALSE)
+                (dormitorios INDIVIDUAL DOBLE)
+                (garaje 0)
+                (mascotasProhibidas FALSE)
+                (piscina FALSE)
+                (precioMensual 550.0)
+                (soleada MANANA)
+                (superficie 61.0)
+                (terraza FALSE)
+                (tipoVivienda PISO)
+                (ubicacionVivienda [ontologia_Class32])
+                (vistas FALSE))
+
+        ([ontologia_Class32] of  Ubicacion
+
+                (coordX 48.0)
+                (coordY 39.0))
+
+        ([ontologia_Class33] of  ViviendaAlquiler
+
+                (aireAcondicionado TRUE)
+                (amueblada FALSE)
+                (balcon FALSE)
+                (banos 1)
+                (calefaccion FALSE)
+                (conElectrodomesticos FALSE)
+                (dormitorios DOBLE INDIVIDUAL)
+                (garaje 0)
+                (mascotasProhibidas FALSE)
+                (piscina FALSE)
+                (precioMensual 415.0)
+                (soleada TODO-EL-DIA)
+                (superficie 75.0)
+                (terraza FALSE)
+                (tipoVivienda PISO)
+                (ubicacionVivienda [ontologia_Class34])
+                (vistas FALSE))
+
+        ([ontologia_Class34] of  Ubicacion
+
+                (coordX 94.0)
+                (coordY 91.0))
+
+        ([ontologia_Class35] of  ViviendaAlquiler
+
+                (aireAcondicionado TRUE)
+                (amueblada TRUE)
+                (balcon FALSE)
+                (banos 3)
+                (calefaccion TRUE)
+                (conElectrodomesticos TRUE)
+                (dormitorios DOBLE DOBLE INDIVIDUAL INDIVIDUAL)
+                (garaje 2)
+                (mascotasProhibidas TRUE)
+                (piscina TRUE)
+                (precioMensual 1450.0)
+                (soleada TODO-EL-DIA)
+                (superficie 130.0)
+                (terraza FALSE)
+                (tipoVivienda UNIFAMILIAR)
+                (ubicacionVivienda [ontologia_Class36])
+                (vistas FALSE))
+
+        ([ontologia_Class36] of  Ubicacion
+
+                (coordX 50.0)
+                (coordY 76.0))
+
+        ([ontologia_Class37] of  ViviendaAlquiler
+
+                (aireAcondicionado TRUE)
+                (amueblada TRUE)
+                (balcon TRUE)
+                (banos 3)
+                (calefaccion TRUE)
+                (conElectrodomesticos TRUE)
+                (dormitorios INDIVIDUAL DOBLE DOBLE)
+                (garaje 2)
+                (mascotasProhibidas FALSE)
+                (piscina FALSE)
+                (precioMensual 1600.0)
+                (soleada TARDE)
+                (superficie 120.0)
+                (terraza TRUE)
+                (tipoVivienda PISO)
+                (ubicacionVivienda [ontologia_Class38])
+                (vistas TRUE))
+
+        ([ontologia_Class38] of  Ubicacion
+
+                (coordX 55.0)
+                (coordY 70.0))
+
+        ([ontologia_Class39] of  ViviendaAlquiler
+
+                (aireAcondicionado TRUE)
+                (amueblada TRUE)
+                (balcon FALSE)
+                (banos 2)
+                (calefaccion TRUE)
+                (conElectrodomesticos TRUE)
+                (dormitorios DOBLE INDIVIDUAL)
+                (garaje 1)
+                (mascotasProhibidas TRUE)
+                (piscina FALSE)
+                (precioMensual 900.0)
+                (soleada MANANA)
+                (superficie 65.0)
+                (terraza FALSE)
+                (tipoVivienda PISO)
+                (ubicacionVivienda [ontologia_Class40])
+                (vistas FALSE))
+
+        ([ontologia_Class4] of  Servicio
+
+                (tipoServicio TRANSPORTE-PUBLICO)
+                (ubicacionServicio [ontologia_Class5]))
+
+        ([ontologia_Class40] of  Ubicacion
+
+                (coordX 12.0)
+                (coordY 87.0))
+
+        ([ontologia_Class41] of  ViviendaAlquiler
+
+                (aireAcondicionado FALSE)
+                (amueblada TRUE)
+                (balcon TRUE)
+                (banos 1)
+                (calefaccion FALSE)
+                (conElectrodomesticos FALSE)
+                (dormitorios DOBLE)
+                (garaje 0)
+                (mascotasProhibidas FALSE)
+                (piscina FALSE)
+                (precioMensual 660.0)
+                (soleada TODO-EL-DIA)
+                (superficie 60.0)
+                (terraza FALSE)
+                (tipoVivienda PISO)
+                (ubicacionVivienda [ontologia_Class42])
+                (vistas FALSE))
+
+        ([ontologia_Class42] of  Ubicacion
+
+                (coordX 20.0)
+                (coordY 15.0))
+
+        ([ontologia_Class43] of  ViviendaAlquiler
+
+                (aireAcondicionado FALSE)
+                (amueblada FALSE)
+                (balcon FALSE)
+                (banos 1)
+                (calefaccion TRUE)
+                (conElectrodomesticos FALSE)
+                (dormitorios DOBLE INDIVIDUAL INDIVIDUAL)
+                (garaje 0)
+                (mascotasProhibidas FALSE)
+                (piscina FALSE)
+                (precioMensual 620.0)
+                (soleada MANANA)
+                (superficie 72.0)
+                (terraza FALSE)
+                (tipoVivienda UNIFAMILIAR)
+                (ubicacionVivienda [ontologia_Class44])
+                (vistas TRUE))
+
+        ([ontologia_Class44] of  Ubicacion
+
+                (coordX 23.0)
+                (coordY 58.0))
+
+        ([ontologia_Class45] of  ViviendaAlquiler
+
+                (aireAcondicionado TRUE)
+                (amueblada TRUE)
+                (balcon FALSE)
+                (banos 2)
+                (calefaccion FALSE)
+                (conElectrodomesticos TRUE)
+                (dormitorios INDIVIDUAL INDIVIDUAL INDIVIDUAL INDIVIDUAL)
+                (garaje 0)
+                (mascotasProhibidas FALSE)
+                (piscina FALSE)
+                (precioMensual 1000.0)
+                (soleada MANANA)
+                (superficie 90.0)
+                (terraza FALSE)
+                (tipoVivienda PISO)
+                (ubicacionVivienda [ontologia_Class46])
+                (vistas FALSE))
+
+        ([ontologia_Class46] of  Ubicacion
+
+                (coordX 60.0)
+                (coordY 87.0))
+
+        ([ontologia_Class47] of  ViviendaAlquiler
+
+                (aireAcondicionado TRUE)
+                (amueblada TRUE)
+                (balcon FALSE)
+                (banos 1)
+                (calefaccion FALSE)
+                (conElectrodomesticos TRUE)
+                (dormitorios INDIVIDUAL INDIVIDUAL INDIVIDUAL)
+                (garaje 0)
+                (mascotasProhibidas FALSE)
+                (piscina FALSE)
+                (precioMensual 750.0)
+                (soleada TARDE)
+                (superficie 81.0)
+                (terraza FALSE)
+                (tipoVivienda PISO)
+                (ubicacionVivienda [ontologia_Class48])
+                (vistas FALSE))
+
+        ([ontologia_Class48] of  Ubicacion
+
+                (coordX 44.0)
+                (coordY 10.0))
+
+        ([ontologia_Class49] of  Servicio
+
+                (tipoServicio COLEGIO)
+                (ubicacionServicio [ontologia_Class50]))
+
+        ([ontologia_Class5] of  Ubicacion
+
+                (coordX 70.0)
+                (coordY 17.0))
+
+        ([ontologia_Class50] of  Ubicacion
+
+                (coordX 65.0)
+                (coordY 28.0))
+
+        ([ontologia_Class51] of  Servicio
+
+                (tipoServicio COLEGIO)
+                (ubicacionServicio [ontologia_Class52]))
+
+        ([ontologia_Class52] of  Ubicacion
+
+                (coordX 30.0)
+                (coordY 85.0))
+
+        ([ontologia_Class53] of  Servicio
+
+                (tipoServicio HOSPITAL)
+                (ubicacionServicio [ontologia_Class54]))
+
+        ([ontologia_Class54] of  Ubicacion
+
+                (coordX 29.0)
+                (coordY 30.0))
+
+        ([ontologia_Class55] of  Servicio
+
+                (tipoServicio ZONA-OCIO)
+                (ubicacionServicio [ontologia_Class56]))
+
+        ([ontologia_Class56] of  Ubicacion
+
+                (coordX 75.0)
+                (coordY 33.0))
+
+        ([ontologia_Class57] of  Servicio
+
+                (tipoServicio ZONA-OCIO)
+                (ubicacionServicio [ontologia_Class58]))
+
+        ([ontologia_Class58] of  Ubicacion
+
+                (coordX 60.0)
+                (coordY 90.0))
+
+        ([ontologia_Class6] of  Servicio
+
+                (tipoServicio TRANSPORTE-PUBLICO)
+                (ubicacionServicio [ontologia_Class7]))
+
+        ([ontologia_Class7] of  Ubicacion
+
+                (coordX 45.0)
+                (coordY 67.0))
+
+        ([ontologia_Class8] of  Servicio
+
+                (tipoServicio ZONA-COMERCIAL)
+                (ubicacionServicio [ontologia_Class9]))
+
+        ([ontologia_Class9] of  Ubicacion
+
+                (coordX 15.0)
+                (coordY 70.0))
 )
 
 ;;;--------------------------------------------------------------------------;;;

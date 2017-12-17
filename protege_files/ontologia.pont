@@ -1,4 +1,4 @@
-; Fri Dec 08 16:36:58 CET 2017
+; Sat Dec 16 20:07:13 CET 2017
 ; 
 ;+ (version "3.4.8")
 ;+ (build "Build 629")
@@ -7,6 +7,11 @@
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
 	(role abstract)
+	(single-slot conElectrodomesticos
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
 	(single-slot tipoVivienda
 		(type SYMBOL)
 		(allowed-values PISO UNIFAMILIAR)
@@ -20,6 +25,11 @@
 	(multislot criteriosCumplidos
 		(type STRING)
 		(create-accessor read-write))
+	(single-slot calefaccion
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
 	(single-slot soleada
 		(type SYMBOL)
 		(allowed-values MANANA TARDE TODO-EL-DIA NO)
@@ -27,6 +37,21 @@
 		(create-accessor read-write))
 	(multislot criteriosNoCumplidos
 		(type STRING)
+		(create-accessor read-write))
+	(single-slot clase
+		(type SYMBOL)
+		(allowed-values ALTA MEDIA BAJA)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot piscina
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot ubicacionBarrio
+		(type INSTANCE)
+;+		(allowed-classes Ubicacion)
+;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot KB_055321_Class20
 		(type STRING)
@@ -37,12 +62,41 @@
 ;+		(allowed-classes ViviendaAlquiler)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
+	(single-slot balcon
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot situacion
+		(type SYMBOL)
+		(allowed-values MONTANA PLAYA CENTRO-HISTORICO BARRIO-MODERNO PERIFERIA)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
 	(single-slot precioMensual
 		(type FLOAT)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
+	(single-slot terraza
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot barrioVivienda
+		(type INSTANCE)
+;+		(allowed-classes Barrio)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
 	(multislot criteriosExtra
 		(type STRING)
+		(create-accessor read-write))
+	(single-slot mascotasProhibidas
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot banos
+		(type INTEGER)
+;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(multislot dormitorios
 		(type SYMBOL)
@@ -51,6 +105,21 @@
 		(create-accessor read-write))
 	(single-slot superficie
 		(type FLOAT)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot garaje
+		(type INTEGER)
+		(default 0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot aireAcondicionado
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot vistas
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot grado
@@ -80,7 +149,7 @@
 		(create-accessor read-write))
 	(single-slot tipoServicio
 		(type SYMBOL)
-		(allowed-values COLEGIO HOSPITAL ZONA-OCIO)
+		(allowed-values COLEGIO HOSPITAL ZONA-OCIO TRANSPORTE-PUBLICO ZONA-COMERCIAL SUPERMERCADO CENTRO-DE-SALUD ZONA-VERDE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write)))
 
@@ -101,6 +170,21 @@
 (defclass ViviendaAlquiler
 	(is-a USER)
 	(role concrete)
+	(single-slot garaje
+		(type INTEGER)
+		(default 0)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot aireAcondicionado
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot conElectrodomesticos
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
 	(single-slot soleada
 		(type SYMBOL)
 		(allowed-values MANANA TARDE TODO-EL-DIA NO)
@@ -110,7 +194,12 @@
 		(type FLOAT)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
-	(single-slot amueblada
+	(single-slot terraza
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot vistas
 		(type SYMBOL)
 		(allowed-values FALSE TRUE)
 ;+		(cardinality 1 1)
@@ -120,14 +209,48 @@
 		(allowed-values PISO UNIFAMILIAR)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
+	(single-slot barrioVivienda
+		(type INSTANCE)
+;+		(allowed-classes Barrio)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot mascotasProhibidas
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot banos
+		(type INTEGER)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot piscina
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot amueblada
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
 	(multislot dormitorios
 		(type SYMBOL)
 		(allowed-values INDIVIDUAL DOBLE)
 		(cardinality 1 ?VARIABLE)
 		(create-accessor read-write))
+	(single-slot balcon
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
 	(single-slot ubicacionVivienda
 		(type INSTANCE)
 ;+		(allowed-classes Ubicacion)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot calefaccion
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot superficie
@@ -140,7 +263,7 @@
 	(role concrete)
 	(single-slot tipoServicio
 		(type SYMBOL)
-		(allowed-values COLEGIO HOSPITAL ZONA-OCIO)
+		(allowed-values COLEGIO HOSPITAL ZONA-OCIO TRANSPORTE-PUBLICO ZONA-COMERCIAL SUPERMERCADO CENTRO-DE-SALUD ZONA-VERDE)
 ;+		(cardinality 1 1)
 		(create-accessor read-write))
 	(single-slot ubicacionServicio
@@ -170,4 +293,23 @@
 		(create-accessor read-write))
 	(multislot criteriosExtra
 		(type STRING)
+		(create-accessor read-write)))
+
+(defclass Barrio
+	(is-a USER)
+	(role concrete)
+	(single-slot situacion
+		(type SYMBOL)
+		(allowed-values MONTANA PLAYA CENTRO-HISTORICO BARRIO-MODERNO PERIFERIA)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot clase
+		(type SYMBOL)
+		(allowed-values ALTA MEDIA BAJA)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot ubicacionBarrio
+		(type INSTANCE)
+;+		(allowed-classes Ubicacion)
+;+		(cardinality 1 1)
 		(create-accessor read-write)))
