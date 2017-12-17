@@ -1040,7 +1040,7 @@
 )
 
 (deffunction si-o-no-p-indef (?pregunta)
-	(bind ?respuesta (pregunta ?pregunta si no s n))
+	(bind ?respuesta (pregunta ?pregunta si no s n indef))
 	(if (or (eq (lowcase ?respuesta) si) (eq (lowcase ?respuesta) s))
 		then TRUE
 		else (if (or (eq (lowcase ?respuesta) no) (eq (lowcase ?respuesta) n))
@@ -1069,7 +1069,12 @@
         (bind ?ay (send ?ubA get-coordY))
         (bind ?bx (send ?ubB get-coordX))
         (bind ?by (send ?ubB get-coordY))
-        (bind ?distancia (sqrt (+ (** (- ?bx ?ax) 2) (** (- ?by ?ay) 2))))
+        (sqrt (+ (** (- ?bx ?ax) 2) (** (- ?by ?ay) 2)))
+)
+
+(deffunction distancia-relativa (?ubA ?ubB)
+        ; ?ubA y ?ubB son instancias de la clase Ubicacion
+        (bind ?distancia (distancia ?ubA ?ubB))
         (bind ?d (
                 if (> ?distancia ?*dist-corta*) 
                 then (
@@ -1079,6 +1084,25 @@
                 ) 
                 else CERCA
         ))
+        ?d
+)
+
+(deffunction barrio-mas-cercano (?v)
+        ; Devuelve el barrio al que pertenece la vivienda ?v (el más cercano)
+        (bind $?barrios (find-all-instances ((?inst Barrio)) TRUE))
+        (bind ?barrio (nth$ 1 ?barrios))
+        (bind ?ubV (send ?v get-ubicacionVivienda))
+        (bind ?distMin (distancia ?ubV (send ?barrio get-ubicacionBarrio)))
+
+        (loop-for-count (?i 2 (length$ ?barrios)) do
+                (bind ?b (nth$ ?i ?barrios))
+                (bind ?d (distancia ?ubV (send ?b get-ubicacionBarrio)))
+                (if (< ?d ?distMin) then 
+                        (bind ?barrio ?b)
+                        (bind ?distMin ?d)
+                )
+        )
+        ?barrio
 )
 
 ; Listas
@@ -1095,6 +1119,17 @@
 ;;;--------------------------------------------------------------------------;;;
 
 (defmodule MAIN (export ?ALL))
+
+(defrule inicializar-barrios-viviendas
+        (initial-fact)
+        =>
+        (bind $?all (find-all-instances ((?inst ViviendaAlquiler)) TRUE))
+        (loop-for-count (?i 1 (length$ ?all)) do
+                (bind ?vivienda (nth$ ?i ?all))
+                (send ?vivienda put-barrioVivienda (instance-address (barrio-mas-cercano ?vivienda)))
+        )
+        (printout t "Barrios inicializados" crlf)
+)
 
 (defrule inicio "regla inicial"
 	(initial-fact)
@@ -1237,7 +1272,7 @@
 	(not (vivienda-amueblada-done))
 	?cliente <- (Cliente)
 	=>
-	(bind ?amueblada (si-o-no-p-indef "La casa tiene que estar amueblada ((-1) si es indiferente)"))
+	(bind ?amueblada (si-o-no-p-indef "La casa tiene que estar amueblada"))
 	(modify ?cliente (amueblada ?amueblada))
 	(assert (vivienda-amueblada-done))
 )
@@ -1314,7 +1349,6 @@
         ?preferencia <- (PreferenciaServiciosCercanos (serviciosCercanos $?sc))
         (test (> (length$ ?es) 0))
         =>
-        (printout t "PREFERENCIA EDAD SOLICITANTES" crlf)
         (bind $?lista (create$))
         (progn$ (?edad ?es)
                 (if (< ?edad 18) then (bind ?lista (insert$ ?lista 1 COLEGIO))
@@ -1333,7 +1367,6 @@
         ?preferencia <- (PreferenciaServiciosCercanos (serviciosCercanos $?sc))
         (test (neq ?ts INDEF))
         =>
-        (printout t "PREFERENCIA TIPOLOGIA SOLICITANTES" crlf)
         (switch ?ts
                 (case PAREJA-SIN-HIJOS then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 ZONA-OCIO))))
                 (case PAREJA-HIJOS-FUTURO then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 COLEGIO))))
@@ -1475,7 +1508,7 @@
 	(RestriccionServiciosCercanos (serviciosCercanos $?sc))
 	(test (and (eq ?vivienda ?viviendaR) (member ?tipoS ?sc)))
 	=>
-	(if (eq (distancia ?ubicacionV ?ubicacionS) CERCA) then 
+	(if (eq (distancia-relativa ?ubicacionV ?ubicacionS) CERCA) then 
 		(slot-insert$ ?recomendacion criteriosCumplidos 1 (str-cat ?*crit-serv-cerc* " - " ?tipoS))
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 (str-cat ?*crit-serv-cerc* " - " ?tipoS)))
 )
@@ -1487,7 +1520,7 @@
         (PreferenciaServiciosCercanos (serviciosCercanos $?sc))
         (test (and (eq ?vivienda ?viviendaR) (member ?tipoS ?sc)))
         =>
-        (if (eq (distancia ?ubicacionV ?ubicacionS) CERCA) then 
+        (if (eq (distancia-relativa ?ubicacionV ?ubicacionS) CERCA) then 
                 (slot-insert$ ?recomendacion criteriosExtra 1 (str-cat ?*crit-serv-cerc* " - " ?tipoS)))
 )
 
