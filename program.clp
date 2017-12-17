@@ -966,6 +966,10 @@
 	(slot amueblada (type SYMBOL) (allowed-values TRUE FALSE INDEF) (default INDEF))
 )
 
+(deftemplate RestriccionBarrio
+        (multislot clases (type SYMBOL) (allowed-values ALTA MEDIA BAJA))
+)
+
 ;;;--------------------------------------------------------------------------;;;
 ;;;-------------------------- VARIABLES GLOBALES ----------------------------;;;
 ;;;--------------------------------------------------------------------------;;;
@@ -983,6 +987,8 @@
 (defglobal ?*crit-amueblada* = "Amueblada")
 
 (defglobal ?*crit-serv-cerc* = "Servicio cercano")
+
+(defglobal ?*crit-clase-barrio* = "Clase barrio")
 
 ; Distancias
 
@@ -1317,16 +1323,18 @@
 	(not (RestriccionPrecio))
 	(not (RestriccionDormitorios))
 	(not (RestriccionServiciosCercanos))
-    (not (PreferenciaServiciosCercanos))
+        (not (PreferenciaServiciosCercanos))
 	(not (RestriccionSoleada))
 	(not (RestriccionAmueblada))
+        (not (RestriccionBarrio))
 	=>
 	(assert (RestriccionPrecio))
 	(assert (RestriccionDormitorios))
 	(assert (RestriccionServiciosCercanos))
-    (assert (PreferenciaServiciosCercanos))
+        (assert (PreferenciaServiciosCercanos))
 	(assert (RestriccionSoleada))
 	(assert (RestriccionAmueblada))
+        (assert (RestriccionBarrio))
 )
 
 (defrule restriccion-precio
@@ -1398,6 +1406,23 @@
                 ;(case INDIVIDUO then (modify ?preferencia (serviciosCercanos (insert$ ?sc 1 ZONA-OCIO))))
         )
         (assert (preferencia-servicios-cercanos-tipologia-solicitantes-done))
+)
+
+(defrule restriccion-clase-barrio-tipologia-solicitantes
+        (nuevo-cliente)
+        (not (restriccion-clase-barrio-tipologia-solicitantes-done))
+        ?cliente <- (Cliente (tipologiaSolicitantes ?ts))
+        ?restriccion <- (RestriccionBarrio (clases $?clases))
+        (test (neq ?ts INDEF))
+        =>
+        (switch ?ts
+                ;(case PAREJA-SIN-HIJOS then ())
+                (case PAREJA-HIJOS-FUTURO then (modify ?restriccion (clases (insert$ ?clases 1 (create$ MEDIA ALTA)))))
+                (case FAMILIA then (modify ?restriccion (clases (insert$ ?clases 1 (create$ MEDIA ALTA)))))
+                (case ESTUDIANTES then (modify ?restriccion (clases (insert$ ?clases 1 (create$ MEDIA BAJA)))))
+                ;(case INDIVIDUO then ())
+        )
+        (assert (restriccion-clase-barrio-tipologia-solicitantes-done))
 )
 
 (defrule restriccion-soleada
@@ -1570,6 +1595,19 @@
 	(if (eq ?amueblada ?am) then
 		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-amueblada*)
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-amueblada*))
+)
+
+; Criterios sobre el barrio
+
+(defrule criterio-clase
+        ?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+        ?vivienda <- (object (is-a ViviendaAlquiler) (barrioVivienda ?barrio))
+        (RestriccionBarrio (clases $?clases))
+        (test (and (eq ?vivienda ?viviendaR) (> (length$ ?clases) 0)))
+        =>
+        (if (member (send ?barrio get-clase) ?clases) then 
+                (slot-insert$ ?recomendacion criteriosCumplidos 1 (str-cat ?*crit-clase-barrio* " - " (implode$ ?clases)))
+        else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 (str-cat ?*crit-clase-barrio* " - " (implode$ ?clases))))
 )
 
 (defrule fin-filtrado
