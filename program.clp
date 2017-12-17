@@ -905,6 +905,8 @@
 		(allowed-values TRUE FALSE INDEF)
 		(default INDEF)
 	)
+
+	(slot banos (type INTEGER) (default -1))
 )
 
 ;;;--------------------------------------------------------------------------;;;
@@ -962,6 +964,10 @@
 	(slot amueblada (type SYMBOL) (allowed-values TRUE FALSE INDEF) (default INDEF))
 )
 
+(deftemplate RestriccionBanos
+	(slot banos (type FLOAT))
+)
+
 ;;;--------------------------------------------------------------------------;;;
 ;;;-------------------------- VARIABLES GLOBALES ----------------------------;;;
 ;;;--------------------------------------------------------------------------;;;
@@ -977,6 +983,8 @@
 (defglobal ?*crit-soleada* = "Soleada")
 
 (defglobal ?*crit-amueblada* = "Amueblada")
+
+(defglobal ?*crit-banos* = "Baños")
 
 (defglobal ?*crit-serv-cerc* = "Servicio cercano")
 
@@ -1277,6 +1285,16 @@
 	(assert (vivienda-amueblada-done))
 )
 
+(defrule banos
+	(nuevo-cliente)
+	(not (banos-done))
+	?cliente <- (Cliente)
+	=>
+	(bind ?banos (pregunta-numerica "Número de baños ((-1) si es indiferente)"))
+	(modify ?cliente (banos ?banos))
+	(assert (banos-done))
+)
+
 (defrule fin-preguntas
 	(nuevo-cliente)
 	=>
@@ -1302,6 +1320,7 @@
     (not (PreferenciaServiciosCercanos))
 	(not (RestriccionSoleada))
 	(not (RestriccionAmueblada))
+	(not (RestriccionBanos))
 	=>
 	(assert (RestriccionPrecio))
 	(assert (RestriccionDormitorios))
@@ -1309,6 +1328,7 @@
     (assert (PreferenciaServiciosCercanos))
 	(assert (RestriccionSoleada))
 	(assert (RestriccionAmueblada))
+	(assert (RestriccionBanos))
 )
 
 (defrule restriccion-precio
@@ -1395,6 +1415,16 @@
 	=>
 	(modify ?restriccion (amueblada ?a))
 	(assert (restriccion-amueblada-done))
+)
+
+(defrule restriccion-banos
+	(nuevo-cliente)
+	(not (restriccion-banos-done))
+	?cliente <- (Cliente (banos ?banos))
+	?restriccion <- (RestriccionBanos)
+	=>
+	(modify ?restriccion (banos ?banos))
+	(assert (restriccion-banos-done))
 )
 
 (defrule fin-inferir-datos
@@ -1549,6 +1579,20 @@
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-amueblada*))
 )
 
+; Criterio sobre el numero de banos
+
+(defrule criterio-banos
+	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
+	?vivienda <- (object (is-a ViviendaAlquiler) (banos ?banos))
+	(RestriccionBanos (banos ?ban))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?ban -1)))
+	=>
+	(printout t "Baños vivienda: " ?banos ", Cliente: " ?ban crlf)
+	(if (eq ?banos ?ban) then
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-banos*)
+	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 ?*crit-banos*))
+)
+
 (defrule fin-filtrado
 	(nuevo-cliente)
 	=>
@@ -1568,7 +1612,6 @@
 
 (defrule generacion-puntuacion
 	(nuevo-cliente)
-	(not (generacion-puntuacion-done))
 	?recomendacion <- (object
 		(is-a Recomendacion)
 		(vivienda ?viviendaR)
@@ -1589,11 +1632,9 @@
 	)
 
 	(send ?recomendacion put-grado ?puntuacion)
-	(assert (generacion-puntuacion-done))
 )
 
 (defrule generacion-resultados
-	(generacion-puntuacion-done)
 	?recomendacion <- (object
 		(is-a Recomendacion)
 		(vivienda ?viviendaR)
