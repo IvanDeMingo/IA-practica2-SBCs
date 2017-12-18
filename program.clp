@@ -1361,7 +1361,7 @@
 	(not (coches-done))
 	?cliente <- (Cliente)
 	=>
-	(bind ?coches (pregunta-numerica "Tiene coche"))
+	(bind ?coches (pregunta-numerica "Cuántos coches tienes ((-1) si es indiferente)"))
 	(modify ?cliente (coches ?coches))
 	(assert (coches-done))
 )
@@ -1744,7 +1744,7 @@
 	(test (and (eq ?vivienda ?viviendaR) (> (length$ ?clases) 0)))
 	=>
 	(if (member (send ?barrio get-clase) ?clases) then 
-			(slot-insert$ ?recomendacion criteriosCumplidos 1 (str-cat ?*crit-clase-barrio* " - " (implode$ ?clases)))
+		(slot-insert$ ?recomendacion criteriosCumplidos 1 (str-cat ?*crit-clase-barrio* " - " (implode$ ?clases)))
 	else (slot-insert$ ?recomendacion criteriosNoCumplidos 1 (str-cat ?*crit-clase-barrio* " - " (implode$ ?clases))))
 )
 
@@ -1754,7 +1754,7 @@
 	?recomendacion <- (object (is-a Recomendacion) (vivienda ?viviendaR))
 	?vivienda <- (object (is-a ViviendaAlquiler) (garaje ?garaje))
 	(RestriccionGaraje (plazas ?plazas))
-	(test (eq ?vivienda ?viviendaR))
+	(test (and (eq ?vivienda ?viviendaR) (neq ?plazas -1)))
 	=>
 	(if (>= ?garaje ?plazas) then
 		(slot-insert$ ?recomendacion criteriosCumplidos 1 ?*crit-garaje*)
