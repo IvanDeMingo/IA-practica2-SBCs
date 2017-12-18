@@ -1016,6 +1016,21 @@
 
 (defglobal ?*crit-garaje* = "Garaje")
 
+; Precios
+
+(defglobal ?*precio-bajo-limite* = 600)
+(defglobal ?*precio-medio-limite* = 1100)
+
+; Puntuaciones
+
+(defglobal ?*puntuacion-baja-limite* = 0)
+(defglobal ?*puntuacion-media-limite* = 5)
+
+; Superficie
+
+(defglobal ?*superficie-pequena* = 70)
+(defglobal ?*superficie-media* = 120)
+
 ; Distancias
 
 (defglobal ?*dist-corta* = 15)
@@ -1093,6 +1108,10 @@
 	?res
 )
 
+(deffunction recomendacion-sort (?r1 ?r2)
+        (> (send ?r1 get-grado) (send ?r2 get-grado))
+)
+
 ; Cálculos
 
 (deffunction precio-max-flexible (?precio)
@@ -1148,6 +1167,89 @@
 	(bind ?count 0)
 	(progn$ (?elem ?lista) (if (eq ?x ?elem) then (bind ?count (+ ?count 1))))
 	?count
+)
+
+; Otros
+
+(deffunction print-recomendaciones-resultado (?titulo $?recomendaciones)
+        (printout t ?titulo crlf)
+        (loop-for-count (?i 1 (length$ ?recomendaciones)) do
+                (bind ?recomendacion (nth$ ?i ?recomendaciones))
+                (bind ?criteriosCumplidos (send ?recomendacion get-criteriosCumplidos))
+                (bind ?criteriosNoCumplidos (send ?recomendacion get-criteriosNoCumplidos))
+                (bind ?vivienda (send ?recomendacion get-vivienda))
+                (printout t "    Recomendacion: " ?recomendacion crlf)
+
+                (printout t "        Criterios cumplidos:")
+                (loop-for-count (?j 1 (length$ ?criteriosCumplidos)) do
+                        (bind ?criterio (nth$ ?j ?criteriosCumplidos))
+                        (printout t " (" ?criterio ")")
+                )
+                (printout t crlf)
+                (printout t "        Criterios no cumplidos:")
+                (loop-for-count (?j 1 (length$ ?criteriosNoCumplidos)) do
+                        (bind ?criterio (nth$ ?j ?criteriosNoCumplidos))
+                        (printout t " (" ?criterio ")")
+                )
+                (printout t crlf)
+
+                (bind ?grado (send ?recomendacion get-grado))
+                (printout t "        Grado: " ?grado crlf)
+
+
+                (bind ?garaje (send ?vivienda get-garaje))
+                (bind ?aireAcondicionado (send ?vivienda get-aireAcondicionado))
+                (bind ?conElectrodomesticos (send ?vivienda get-conElectrodomesticos))
+                (bind ?soleada (send ?vivienda get-soleada))
+                (bind ?precioMensual (send ?vivienda get-precioMensual))
+                (bind ?terraza (send ?vivienda get-terraza))
+                (bind ?vistas (send ?vivienda get-vistas))
+                (bind ?tipoVivienda (send ?vivienda get-tipoVivienda))
+                (bind ?barrioVivienda (send ?vivienda get-barrioVivienda))
+                (bind ?mascotasProhibidas (send ?vivienda get-mascotasProhibidas))
+                (bind ?banos (send ?vivienda get-banos))
+                (bind ?piscina (send ?vivienda get-piscina))
+                (bind ?amueblada (send ?vivienda get-amueblada))
+                (bind $?dormitorios (send ?vivienda get-dormitorios))
+                (bind ?balcon (send ?vivienda get-balcon))
+                (bind ?calefaccion (send ?vivienda get-calefaccion))
+                (bind ?superficie (send ?vivienda get-superficie))
+                (printout t "        Vivienda: " ?vivienda crlf)
+                (printout t "            Plazas de garaje: " ?garaje crlf)
+                (printout t "            Aire acondicionado: " ?aireAcondicionado crlf)
+                (printout t "            Con electrodomesticos: " ?conElectrodomesticos crlf)
+                (printout t "            Soleada: " ?soleada crlf)
+                (printout t "            Precio mensual: " ?precioMensual crlf)
+                (printout t "            Terraza: " ?terraza crlf)
+                (printout t "            Vistas: " ?vistas crlf)
+                (printout t "            Tipo vivienda: " ?tipoVivienda crlf)
+                (printout t "            Barrio vivienda: " ?barrioVivienda crlf)
+                (printout t "            Mascotas prohibidas: " ?mascotasProhibidas crlf)
+                (printout t "            Número de baños: " ?banos crlf)
+                (printout t "            Piscina: " ?piscina crlf)
+                (printout t "            Amueblada: " ?amueblada crlf)
+                (printout t "            Dormitorios:")
+                        (loop-for-count (?j 1 (length$ ?dormitorios)) do
+                                (bind ?dormitorio (nth$ ?j ?dormitorios))
+                                (printout t " " ?dormitorio)
+                        )
+                        (printout t crlf)
+                (printout t "            Balcon: " ?balcon crlf)            
+                (printout t "            Calefacción: " ?calefaccion crlf)            
+                (printout t "            Superfície: " ?superficie crlf)         
+        )
+        (printout t crlf)
+)
+
+(deffunction recomendacion-es-muy-recomendable (?recomendacion)
+        (bind ?grado (send ?recomendacion get-grado))
+        (if (< ?grado ?*puntuacion-baja-limite*) then
+                FALSE
+        else
+                (if (< ?grado ?*puntuacion-media-limite*) then
+                        FALSE
+                else TRUE)
+        )
 )
 
 ;;;--------------------------------------------------------------------------;;;
@@ -1786,6 +1888,7 @@
 		(criteriosCumplidos $?criteriosCumplidos)
 		(criteriosNoCumplidos $?criteriosNoCumplidos)
 	)
+        ?cliente <- (Cliente (banos ?banos) (numeroDormitorios ?dormitorios))
 	=>
 	(bind ?puntuacion 0)
 
@@ -1798,6 +1901,62 @@
 		(bind ?criterio (nth$ ?i ?criteriosNoCumplidos))
 		(bind ?puntuacion (- ?puntuacion 1))
 	)
+
+        (if (< (send ?viviendaR get-precioMensual) ?*precio-bajo-limite*) then
+                (bind ?puntuacion (+ ?puntuacion 2))
+        else
+                (if (< (send ?viviendaR get-precioMensual) ?*precio-medio-limite*) then
+                        (bind ?puntuacion (+ ?puntuacion 1))
+                )
+        )
+
+        (if (eq (send ?viviendaR get-aireAcondicionado) TRUE) then
+                (bind ?puntuacion (+ ?puntuacion 1))
+        )
+
+        (if (eq (send ?viviendaR get-conElectrodomesticos) TRUE) then
+                (bind ?puntuacion (+ ?puntuacion 1))
+        )
+
+        (if (eq (send ?viviendaR get-vistas) TRUE) then
+                (bind ?puntuacion (+ ?puntuacion 1))
+        )
+
+        (if (eq (send ?viviendaR get-mascotasProhibidas) TRUE) then
+                (bind ?puntuacion (- ?puntuacion 1))
+        )
+
+        (if (and (> ?banos -1) (> (send ?viviendaR get-banos) ?banos)) then
+                (bind ?puntuacion (+ ?puntuacion 1))
+        )
+
+        (if (eq (send ?viviendaR get-piscina) TRUE) then
+                (bind ?puntuacion (+ ?puntuacion 1))
+        )
+
+        (if (eq (send ?viviendaR get-aireAcondicionado) TRUE) then
+                (bind ?puntuacion (+ ?puntuacion 1))
+        )
+
+        (if (and (> ?dormitorios -1) (> (length$ (send ?viviendaR get-dormitorios)) ?dormitorios)) then
+                (bind ?puntuacion (+ ?puntuacion 1))
+        )
+
+        (if (eq (send ?viviendaR get-balcon) TRUE) then
+                (bind ?puntuacion (+ ?puntuacion 1))
+        )
+
+        (if (eq (send ?viviendaR get-calefaccion) TRUE) then
+                (bind ?puntuacion (+ ?puntuacion 1))
+        )
+
+        (if (> (send ?viviendaR get-superficie) ?*superficie-media*) then
+                (bind ?puntuacion (+ ?puntuacion 1))
+        else
+                (if (> (send ?viviendaR get-superficie) ?*superficie-pequena*) then
+                        (bind ?puntuacion (+ ?puntuacion 2))
+                )
+        )
 
 	(send ?recomendacion put-grado ?puntuacion)
 )
@@ -1864,7 +2023,6 @@
 	)
 	(printout t crlf)
 	(printout t "Prefiere transporte público: " ?prefiereTransPublico crlf)
-	(printout t crlf)
         (printout t "Edad solicitantes:")
         (loop-for-count (?i 1 (length$ ?edadSolicitantes)) do
                 (bind ?edad (nth$ ?i ?edadSolicitantes))
@@ -1892,11 +2050,15 @@
         (bind $?adecuado (create$))
         (bind $?muyRecomendable (create$))
 	(bind $?recomendaciones (find-all-instances ((?inst Recomendacion)) TRUE))
+        (bind ?recomendaciones (sort recomendacion-sort ?recomendaciones))
 	(loop-for-count (?i 1 (length$ ?recomendaciones)) do
                 (bind ?recomendacion (nth$ ?i ?recomendaciones))
                 (bind ?vivienda (send ?recomendacion get-vivienda))
                 (if (eq (length$ (send ?recomendacion get-criteriosNoCumplidos)) 0) then
-                        (bind ?adecuado (insert$ ?adecuado 1 ?recomendacion))
+                        ;; Adecuadas y muy recomendables
+                        (if (eq (recomendacion-es-muy-recomendable ?recomendacion) TRUE) then
+                                (bind ?muyRecomendable (insert$ ?adecuado 1 ?recomendacion))
+                        else (bind ?adecuado (insert$ ?adecuado 1 ?recomendacion)))
                 else
                         (if (> (length$ (send ?recomendacion get-criteriosCumplidos)) 2) then
                                 (bind ?parcialmenteAdecuado (insert$ ?parcialmenteAdecuado 1 ?recomendacion))
@@ -1910,29 +2072,17 @@
         (printout t "---------------" crlf)
         (printout t crlf)
 
+        ;; Muy recomendables
+        (print-recomendaciones-resultado "Muy recomendables:" ?muyRecomendable)
+
         ;; Adecuado
-        (printout t "Adecuadas:" crlf)
-        (loop-for-count (?i 1 (length$ ?adecuado)) do
-                (bind ?recomendacion (nth$ ?i ?adecuado))
-                (bind ?vivienda (send ?recomendacion get-vivienda))
-                (printout t "    Recomendacion: " ?recomendacion ", Vivienda: " ?vivienda crlf)
-        )
+        (print-recomendaciones-resultado "Adecuadas:" ?adecuado)
 
         ;; Parcialmente Adecuado
-        (printout t "Parcialmente adecuadas:" crlf)
-        (loop-for-count (?i 1 (length$ ?parcialmenteAdecuado)) do
-                (bind ?recomendacion (nth$ ?i ?parcialmenteAdecuado))
-                (bind ?vivienda (send ?recomendacion get-vivienda))
-                (printout t "    Recomendacion: " ?recomendacion ", Vivienda: " ?vivienda crlf)
-        )
+        (print-recomendaciones-resultado "Parcialmente adecuadas:" ?parcialmenteAdecuado)
 
         ;; No Recomendable
-        (printout t "No recomendables:" crlf)
-        (loop-for-count (?i 1 (length$ ?noRecomendable)) do
-                (bind ?recomendacion (nth$ ?i ?noRecomendable))
-                (bind ?vivienda (send ?recomendacion get-vivienda))
-                (printout t "    Recomendacion: " ?recomendacion ", Vivienda: " ?vivienda crlf)
-        )
+        (print-recomendaciones-resultado "No recomendables:" ?noRecomendable)
 
         (printout t crlf)
         (printout t crlf)
